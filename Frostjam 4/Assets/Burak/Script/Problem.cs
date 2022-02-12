@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class Problem : MonoBehaviour
 {
+    [SerializeField] public Vector2Int gridPosition;
+
+    private void Awake()
+    {
+        GridManager.Instance.objectPositions.Add(gridPosition);
+    }
+
     // Start is called before the first frame update
     void Start()
     {

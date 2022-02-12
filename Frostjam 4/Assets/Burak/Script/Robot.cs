@@ -4,101 +4,69 @@ using UnityEngine;
 
 public class Robot : MonoBehaviour
 {
-    [Header("Settings")]
-    [SerializeField] private float speed;
     [SerializeField] private int minDistance;
     [SerializeField] private int maxDistance;
-    [SerializeField] private Vector2 xBound;
-    [SerializeField] private Vector2 yBound;
-    [SerializeField] private float checkProblemRadius = 2f;
-    [SerializeField] private Problem myProblem;
-
-    [Header("Internal Parameters")]
-    [SerializeField] private Vector3 targetPosition;
-    [SerializeField] private Vector3 direction;
     [SerializeField] private int distance;
-    [SerializeField] private bool isMoving;
+    [SerializeField] public Vector2Int direction;
+    [SerializeField] private float scanProblemDistance;
 
+    public Vector2Int gridPosition;
+    public Vector2Int targetGridPosition;
+    public Vector2Int mainTargetGridPosition;
+
+    public ProgramState programState;
+
+    private GridManager gridManager;
+
+    private void Awake()
+    {
+        gridManager = GridManager.Instance;
+        targetGridPosition = gridPosition;
+        mainTargetGridPosition = gridPosition;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        myProblem = null;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isMoving == false)
-        {
-            SetTargetPosition();
-        }
-
-        GoToTargetPosition();
-        CheckProblemAround();
+        
     }
 
-    private void CheckProblemAround()
+    public void GoToTargetGridPosition()
     {
-        Vector2 center = new Vector2(transform.position.x, transform.position.y);
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(center, checkProblemRadius);
-        List<Transform> problemList = new List<Transform>();
-        foreach (var hitCollider in hitColliders)
-        {
-            if(hitCollider.gameObject.TryGetComponent(out Problem problem))
-            {
-                problemList.Add(problem.transform);
-                Debug.Log("Need to sleep, check this later");
-                Debug.DrawLine(transform.position, problem.transform.position);
-            }
-        }
 
     }
 
-    private void GoToTargetPosition()
+    public void DoSmtBasedOnStatus()
     {
-        if (isMoving == true)
+        switch (programState)
         {
-            transform.position += direction * speed * Time.deltaTime;
-        }
-
-        if(Vector3.Distance(transform.position, targetPosition) <= direction.magnitude * speed * Time.deltaTime)
-        {
-            transform.position = targetPosition;
-            isMoving = false;
+            case ProgramState.TargetLock:
+                break;
+            case ProgramState.WaitingAnotherRobot:
+                break;
+            case ProgramState.Knockback:
+                break;
+            case ProgramState.Moving:
+                break;
+            case ProgramState.Communicating:
+                Debug.LogError(this.name + " state 2");
+                break;
+            case ProgramState.SolvingProblem:
+                Debug.LogError(this.name + " state 2");
+                break;
         }
     }
 
-    // BE CAREFUL, RECURSIVE FUNCTION
-    private void SetTargetPosition()
+    public bool IsAvailable()
     {
-        // return if object is moving
-        if (isMoving == true)  return;
-        // get random x or y direction (0 or 1)
-        int _random = Random.Range(0, 2);
-        // get random direction
-        int xDirection = Random.Range(-1, 2);
-        int yDirection = Random.Range(-1, 2);
-        direction = _random == 0 ? new Vector3(xDirection, 0f, 0f) : new Vector3(0f, yDirection, 0f);
-        // get random distance
-        distance = Random.Range(minDistance, maxDistance + 1);
-        // set target position
-        targetPosition = transform.position + direction * distance;
-
-        // if target is in bounding box set object is moving, otherwise set another target position
-        if (isTargetInBoundingBox() == true)
-        {
-            isMoving = true;
-        }
-        else if (isTargetInBoundingBox() == false)
-        {
-            SetTargetPosition();
-        }
-    }
-
-    private bool isTargetInBoundingBox()
-    {
-        if (targetPosition.x >= xBound.x && targetPosition.x <= xBound.y && targetPosition.y >= yBound.x && targetPosition.y <= yBound.y)
+        // check if it is moving, return boolean
+        if(programState == ProgramState.Moving)
         {
             return true;
         }
@@ -108,13 +76,83 @@ public class Robot : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void SetStatus()
     {
-        if (collision.gameObject.TryGetComponent(out Problem problem))
+
+    }
+
+    public void MoveToTargetPosition()
+    {
+
+    }
+
+    public void CheckIfAnyAdjacentRobot()
+    {
+
+    }
+
+    public void CheckIfAnyAdjacentRobotIncoming() 
+    {
+        
+    }
+
+    public void SetMainTargetGridPosition()
+    {
+        // get random x or y direction (0 or 1)
+        int _randomAxis = Random.Range(0, 2);
+        // get random direction
+        int _randomDirection = Random.Range(0, 2);
+
+        direction = _randomAxis == 0 ? new Vector2Int(_randomDirection == 0 ? 1 : -1, 0) :
+                                        new Vector2Int(0, _randomDirection == 0 ? 1 : -1);
+        // get random distance
+        distance = Random.Range(minDistance, maxDistance + 1);
+        // set main target grid position
+        mainTargetGridPosition = gridPosition + direction * distance;
+
+        // if target is in bounding box set object is moving, otherwise set another target position
+        if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == true)
         {
-            Debug.Log("Collided with problem and destroyed.");
-            Destroy(problem.gameObject, 0.25f);
-            myProblem = null;
+            return;
+        }
+        else if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == false)
+        {
+            SetMainTargetGridPosition();
         }
     }
+
+    public void SetTargetGridPosition()
+    {
+        targetGridPosition = gridPosition + direction;
+        gridManager.robotTargetList[this] = targetGridPosition;
+
+        // TODO: Check if grid position is equal to main target
+        if (gridPosition == mainTargetGridPosition)
+        {
+            SetMainTargetGridPosition();
+            gridManager.robotMainTargetList[this] = mainTargetGridPosition;
+        }
+    }
+
+    public void SearchProblem ()
+    {
+        Vector2 rayDirection = (Vector2)direction;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, scanProblemDistance);
+
+        if(hit.transform.TryGetComponent(out Problem problem))
+        {
+            mainTargetGridPosition = problem.gridPosition;
+            gridManager.robotMainTargetList[this] = mainTargetGridPosition;
+        }
+    }
+}
+
+public enum ProgramState
+{
+    Moving,
+    SolvingProblem,
+    WaitingAnotherRobot,
+    Communicating,
+    TargetLock,
+    Knockback
 }
