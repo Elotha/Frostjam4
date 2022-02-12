@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Robot : MonoBehaviour
 {
@@ -19,10 +21,19 @@ public class Robot : MonoBehaviour
     [SerializeField] private int distance;
     [SerializeField] private bool isMoving;
 
-
+    [Header("Prefab References")]
+    [SerializeField] private GameObject claimSeal;
+    
+    private GameObject sealInstance;
+    private LineRenderer _lineRenderer;
+    private Animator _animator;
     // Start is called before the first frame update
     void Start()
     {
+        _animator = GetComponent<Animator>();
+        _lineRenderer = GetComponent<LineRenderer>();
+        sealInstance = Instantiate(claimSeal, transform.position, claimSeal.transform.rotation);
+        sealInstance.SetActive(false);
         myProblem = null;
     }
 
@@ -33,9 +44,14 @@ public class Robot : MonoBehaviour
         {
             SetTargetPosition();
         }
-
+        
         GoToTargetPosition();
         CheckProblemAround();
+    }
+
+    private void FixedUpdate()
+    {
+        _lineRenderer.SetPosition(0, transform.position);
     }
 
     private void CheckProblemAround()
@@ -60,18 +76,23 @@ public class Robot : MonoBehaviour
         if (isMoving == true)
         {
             transform.position += direction * speed * Time.deltaTime;
+            _animator.SetFloat("HorizontalSpeed", direction.x);
+            _animator.SetFloat("VerticalSpeed", direction.y);
         }
 
         if(Vector3.Distance(transform.position, targetPosition) <= direction.magnitude * speed * Time.deltaTime)
         {
             transform.position = targetPosition;
             isMoving = false;
+            _animator.SetBool("isMoving", false);
         }
     }
 
     // BE CAREFUL, RECURSIVE FUNCTION
     private void SetTargetPosition()
     {
+        sealInstance.SetActive(false);
+        
         // return if object is moving
         if (isMoving == true)  return;
         // get random x or y direction (0 or 1)
@@ -88,12 +109,22 @@ public class Robot : MonoBehaviour
         // if target is in bounding box set object is moving, otherwise set another target position
         if (isTargetInBoundingBox() == true)
         {
+            _animator.SetBool("isMoving", true);
             isMoving = true;
         }
         else if (isTargetInBoundingBox() == false)
         {
             SetTargetPosition();
         }
+
+        ClaimGrid(targetPosition);
+    }
+
+    private void ClaimGrid(Vector3 positionToBeClaimed)
+    {
+        _lineRenderer.SetPosition(1, positionToBeClaimed);
+        sealInstance.transform.position = positionToBeClaimed;
+        sealInstance.SetActive(true);
     }
 
     private bool isTargetInBoundingBox()

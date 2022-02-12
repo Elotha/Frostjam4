@@ -20,11 +20,17 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        //set horizontal and vertical speed on animator!!
         movementVec.x = Input.GetAxis("Horizontal");
         movementVec.y = Input.GetAxis("Vertical");
         if (movementVec.x * movementVec.y != 0)
         {
+            _animator.SetBool("isMoving", true);
             moveSpeed = 3.55f;
+        }
+        else
+        {
+            _animator.SetBool("isMoving", false);
         }
         
         /*
