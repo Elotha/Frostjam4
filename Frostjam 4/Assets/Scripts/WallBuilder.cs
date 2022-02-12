@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -5,10 +6,13 @@ using UnityEngine;
 
 public class WallBuilder : MonoBehaviour
 {
-    [SerializeField]
-    private float distanceBetweenWalls = 0.5f;
+    [SerializeField] private float distanceBetweenWalls = 4f;
 
     [SerializeField] private float movementMultiplier = 2f;
+
+    [SerializeField] private float wallBuildingDuration = 3f;
+
+    [SerializeField] private float ForceMultiplier = 5f;
     
     public Transform parent;
     public GameObject wall;
@@ -26,24 +30,31 @@ public class WallBuilder : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            StartCoroutine("BuildWallsFor");
+            //Physics.IgnoreLayerCollision(6, 7, true);
             creating = true;
             _playerMovement.multiplier = movementMultiplier;
-            Instantiate(wall, transform.position, wall.transform.rotation, parent);
-            
             lastWallPos = transform.position;
         }
+        /*
         else if (Input.GetKeyUp(KeyCode.Space))
         {
+            //Physics.IgnoreLayerCollision(6, 7, false);
             creating = false;
             _playerMovement.multiplier = 1;
         }
-        else
+        */
+        if (creating)
         {
-            if (creating)
-            {
-                adjust();
-            }
+            adjust();
         }
+    }
+
+    IEnumerator BuildWallsFor()
+    {
+        yield return new WaitForSeconds(wallBuildingDuration);
+        creating = false;
+        _playerMovement.multiplier = 1;
     }
     
     /*
@@ -100,4 +111,20 @@ public class WallBuilder : MonoBehaviour
         willBeRotated.transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotationZ + 90f);
     }
     */
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (creating)
+        {
+            if (other.gameObject.CompareTag("Programme"))
+            {
+                Vector3 directionOfForce = other.gameObject.transform.position - transform.position;
+                other.gameObject.GetComponent<Knockback>().getKnocked(directionOfForce);
+                /*
+                Rigidbody2D programmeRb = other.gameObject.GetComponent<Rigidbody2D>();
+                programmeRb.AddForce(directionOfForce * ForceMultiplier, ForceMode2D.Impulse);
+                */
+            }
+        }
+    }
 }
