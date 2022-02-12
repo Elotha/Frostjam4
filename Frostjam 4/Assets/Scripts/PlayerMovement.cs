@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed;
-    public float rayLength = 2.29f;
+    public float multiplier = 1f;
+    
+    private float moveSpeed = 5f;
+    //public float rayLength = 2.29f;
 
     private Rigidbody2D playerRb;
     private Vector2 movementVec;
@@ -24,10 +26,6 @@ public class PlayerMovement : MonoBehaviour
         if (movementVec.x * movementVec.y != 0)
         {
             moveSpeed = 3.55f;
-        }
-        else
-        {
-            moveSpeed = 5f;
         }
         
         /*
@@ -58,6 +56,6 @@ public class PlayerMovement : MonoBehaviour
             playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * Time.deltaTime);
         }
         */
-        playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * Time.deltaTime);
+        playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * multiplier * Time.deltaTime);
     }
 }
