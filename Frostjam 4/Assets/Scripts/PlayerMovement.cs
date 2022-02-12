@@ -6,12 +6,11 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float multiplier = 1f;
-    
+    public Vector2 movementVec;
     private float moveSpeed = 5f;
     //public float rayLength = 2.29f;
 
     private Rigidbody2D playerRb;
-    private Vector2 movementVec;
     private Animator _animator;
     void Start()
     {

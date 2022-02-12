@@ -11,8 +11,6 @@ public class WallBuilder : MonoBehaviour
     [SerializeField] private float movementMultiplier = 2f;
 
     [SerializeField] private float wallBuildingDuration = 3f;
-
-    [SerializeField] private float ForceMultiplier = 5f;
     
     public Transform parent;
     public GameObject wall;
@@ -30,6 +28,7 @@ public class WallBuilder : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.green;
             StartCoroutine("BuildWallsFor");
             //Physics.IgnoreLayerCollision(6, 7, true);
             creating = true;
@@ -54,6 +53,7 @@ public class WallBuilder : MonoBehaviour
     {
         yield return new WaitForSeconds(wallBuildingDuration);
         creating = false;
+        gameObject.GetComponent<SpriteRenderer>().color = Color.white;
         _playerMovement.multiplier = 1;
     }
     
@@ -118,8 +118,8 @@ public class WallBuilder : MonoBehaviour
         {
             if (other.gameObject.CompareTag("Programme"))
             {
-                Vector3 directionOfForce = other.gameObject.transform.position - transform.position;
-                other.gameObject.GetComponent<Knockback>().getKnocked(directionOfForce);
+                //Vector3 directionOfForce = other.gameObject.transform.position - transform.position;
+                other.gameObject.GetComponent<Knockback>().startKnockback(_playerMovement.movementVec);
                 /*
                 Rigidbody2D programmeRb = other.gameObject.GetComponent<Rigidbody2D>();
                 programmeRb.AddForce(directionOfForce * ForceMultiplier, ForceMode2D.Impulse);
