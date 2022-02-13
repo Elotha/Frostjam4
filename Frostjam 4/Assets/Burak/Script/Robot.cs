@@ -44,6 +44,9 @@ public class Robot : MonoBehaviour
     private Rigidbody2D rigid2D;
     private GridManager gridManager;
     private RobotIndicator _robotIndicator;
+    [Tooltip("When at 100, robot becomes sentience and we lose the game or smt. starts with 0")]
+    [SerializeField] public float sentience = 0;
+    [SerializeField] private float sentienceMultiplier;
 
     private void Awake()
     {
@@ -52,7 +55,6 @@ public class Robot : MonoBehaviour
         rigid2D = GetComponent<Rigidbody2D>();
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         Initialize();
@@ -94,6 +96,7 @@ public class Robot : MonoBehaviour
         Debug.Log(other.tag);
         if (other.CompareTag("Wall") && programState != ProgramState.OutOfGridPosition)
         {
+            if (programState == ProgramState.Knockback) return;
             programState = ProgramState.OutOfGridPosition;
             direction = -direction;
             targetGridPosition = gridPosition;
@@ -121,15 +124,18 @@ public class Robot : MonoBehaviour
 
             if (item.Key != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
-                // Debug.Log("Adjacent Robot");
-                communicationPartner = otherRobot;
-                otherRobot.communicationPartner = this;
-                programState = ProgramState.Communicating;
-                communicationDuration = CommunicationDurationMax;
-                otherRobot.programState = ProgramState.Communicating;
-                otherRobot.communicationDuration = CommunicationDurationMax;
+                SetCommunicationPartner(otherRobot);
+                otherRobot.SetCommunicationPartner(this);
             }
         }
+    }
+
+    private void SetCommunicationPartner(Robot otherRobot)
+    {
+        _robotIndicator.ActivateCommunicationIndicator();
+        communicationPartner = otherRobot;
+        programState = ProgramState.Communicating;
+        communicationDuration = CommunicationDurationMax;
     }
 
     public void CheckIfAnyAdjacentProblem()
@@ -145,8 +151,9 @@ public class Robot : MonoBehaviour
             var V2 = problem.gridPosition;
             bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
             bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
+            bool thisRobotSeeksPartner = (problemCooldown <= 0);
 
-            if ((isAdjacentX ^ isAdjacentY))
+            if ((isAdjacentX ^ isAdjacentY) && thisRobotSeeksPartner)
             {
                 // Debug.Log("Adjacent Problem");
                 programState = ProgramState.SolvingProblem;
@@ -220,7 +227,6 @@ public class Robot : MonoBehaviour
 
     public void SetTargetGridPosition()
     {
-        _robotIndicator.DeactivateCommunicationIndicator();
         // TODO: Check if grid position is equal to main target
         if (gridPosition == mainTargetGridPosition)
         {
@@ -295,21 +301,31 @@ public class Robot : MonoBehaviour
             
             // Special Cases
             case ProgramState.SolvingProblem:
-                // TODO; Slowly it fills up
+                // GameManager.ProblemSolved += Time.deltaTime;
+                
                 problemDuration -= Time.deltaTime;
-                if (problemDuration < 0)
+                
+                if (problemDuration < 0 || problemPartner == null)
                 {
                     programState = ProgramState.WaitingForNextTurn;
                     problemCooldown = problemCooldownMax;
+                    problemPartner.IsAvailable = true;
                     problemPartner = null;
                 }
+
+                if (problemPartner != null)
+                {
+                    problemPartner.ReduceProblem();
+                }
+                
                 break;
             case ProgramState.Communicating:
-                // TODO; Slowly it fills up
-                _robotIndicator.ActivateCommunicationIndicator();
+                // GameManager.DetroidBecomeHuman += Time.deltaTime;
                 communicationDuration -= Time.deltaTime;
+                sentience += sentienceMultiplier * Time.deltaTime;
                 if (communicationDuration < 0)
                 {
+                    _robotIndicator.DeactivateCommunicationIndicator();
                     programState = ProgramState.WaitingForNextTurn;
                     CommunicatingCooldown = CommunicatingCooldownMax;
                     communicationPartner = null;
@@ -328,6 +344,24 @@ public class Robot : MonoBehaviour
             gridPosition = targetGridPosition;
             transform.position = gridManager.gridList[gridPosition];
             gridManager.robotList[this] = gridPosition;
+        }
+    }
+
+    public void Interrupt()
+    {
+        switch (programState)
+        {
+            case ProgramState.SolvingProblem:
+                problemPartner.IsAvailable = true;
+                problemPartner = null;
+                problemCooldown = CommunicatingCooldownMax;
+                break;
+            case ProgramState.Communicating:
+                communicationPartner.communicationDuration = 0;
+                communicationPartner = null;
+                CommunicatingCooldown = CommunicatingCooldownMax;
+                _robotIndicator.DeactivateCommunicationIndicator();
+                break;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,12 +9,28 @@ public class GameManager : MonoBehaviour
 {
     public Text leftText;
     public Text timeText;
-    public int problemLeft;
+    public Text aiSentienceText;
+    public int problemLeft => GridManager.Instance.problemsList.Count;
     public int gameLastsFor;
+    public static GameManager Instance;
+
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else if (Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
     void Start()
     {
         InvokeRepeating("CountDowner", 0f, 1f);
-        problemLeft = FindObjectsOfType<Problem>().Length;
         UpdateProblemLeft();
         UpdateTime();
     }
@@ -22,6 +39,7 @@ public class GameManager : MonoBehaviour
     {
         if (gameLastsFor > 0)
         {
+
             gameLastsFor--;
             UpdateTime();
         }
@@ -29,6 +47,11 @@ public class GameManager : MonoBehaviour
         {
             GameOver();
         }
+    }
+
+    private void Update()
+    {
+        UpdateAiSentiencePercent();
     }
 
     private void UpdateTime()
@@ -40,6 +63,17 @@ public class GameManager : MonoBehaviour
     {
         leftText.text = "Problems left: " + problemLeft;
     }
+
+    public void UpdateAiSentiencePercent()
+    {
+        var highestSentience = 0f;
+        foreach (var variable in GridManager.Instance.robotList)
+            if (highestSentience < variable.Key.sentience)
+                highestSentience = variable.Key.sentience;
+
+        aiSentienceText.text = "Maximum AI Sentience: " + (int) highestSentience + "%";
+    }
+    
 
     private void GameOver()
     {

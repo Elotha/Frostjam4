@@ -35,6 +35,7 @@ public class Knockback : MonoBehaviour
     public void startKnockback(Vector3 direction)
     {
         deactivateClaimInfo();
+        _robot.Interrupt();
         _robot.programState = ProgramState.Knockback;
         //programmeRb.bodyType = RigidbodyType2D.Dynamic;
         StartCoroutine(getKnocked(direction));
