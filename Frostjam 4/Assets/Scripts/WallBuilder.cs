@@ -11,6 +11,7 @@ public class WallBuilder : MonoBehaviour
     [SerializeField] private float movementMultiplier = 2f;
 
     [SerializeField] private float wallBuildingDuration = 3f;
+    [SerializeField] private Collider2D myCollider2D;
     
     public Transform parent;
     public GameObject wall;
@@ -37,6 +38,7 @@ public class WallBuilder : MonoBehaviour
             creating = true;
             _animator.speed = 2.0f;
             _playerMovement.multiplierModifier = movementMultiplier;
+            gameObject.layer = LayerMask.NameToLayer("PlayerElevated");
             lastWallPos = transform.position;
         }
         /*
@@ -58,6 +60,7 @@ public class WallBuilder : MonoBehaviour
         yield return new WaitForSeconds(wallBuildingDuration);
         creating = false;
         gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        gameObject.layer = LayerMask.NameToLayer("Player");
         _animator.speed = 1;
         _playerMovement.multiplierModifier = 1;
     }
@@ -133,3 +136,5 @@ public class WallBuilder : MonoBehaviour
         }
     }
 }
+
+

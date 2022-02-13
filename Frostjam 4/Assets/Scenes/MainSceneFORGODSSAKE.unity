@@ -8719,7 +8719,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loopTime: 1.5
-  robotCount: 5
+  robotCount: 8
   width: 21
   height: 17
   cellSize: 1
