@@ -18,14 +18,16 @@ public class Knockback : MonoBehaviour
     private AnimationCurve speedCurve;
 
 
-    private ProgrammeLineRenderer _programmeLineRenderer;
+    private ProgrammeLineRenderer _programmeLineRendererScr;
+    private LineRenderer _programmeLineRenderer;
     private Rigidbody2D programmeRb;
     private Robot _robot;
     private bool haveNoControll = false;
     
     private void Start()
     {
-        _programmeLineRenderer = GetComponent<ProgrammeLineRenderer>();
+        _programmeLineRendererScr = GetComponent<ProgrammeLineRenderer>();
+        _programmeLineRenderer = GetComponent<LineRenderer>();
         _robot = GetComponent<Robot>();
         programmeRb = GetComponent<Rigidbody2D>();
     }
@@ -70,12 +72,12 @@ public class Knockback : MonoBehaviour
     void activateClaimInfo()
     {
         _programmeLineRenderer.enabled = true;
-        _programmeLineRenderer.instance.SetActive(true);
+        _programmeLineRendererScr.instance.SetActive(true);
     }
     void deactivateClaimInfo()
     {
         _programmeLineRenderer.enabled = false;
-        _programmeLineRenderer.instance.SetActive(false);
+        _programmeLineRendererScr.instance.SetActive(false);
     }
 
     private void findClosestGrid()
@@ -90,6 +92,7 @@ public class Knockback : MonoBehaviour
         int minIndex = distances.IndexOf(distances.Min());
         transform.position = GridManager.Instance.gridList.ElementAt(minIndex).Value;
         _robot.gridPosition = GridManager.Instance.gridList.ElementAt(minIndex).Key;
+        _robot.targetGridPosition = GridManager.Instance.gridList.ElementAt(minIndex).Key;
     }
 
     /*
