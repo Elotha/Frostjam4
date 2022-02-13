@@ -175,14 +175,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 473309899}
     m_Modifications:
-    - target: {fileID: 4100363339422988322, guid: 36eec21a83f14f14797d2787240c905e, type: 3}
-      propertyPath: gridPosition.x
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4100363339422988322, guid: 36eec21a83f14f14797d2787240c905e, type: 3}
-      propertyPath: gridPosition.y
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 4100363339422988333, guid: 36eec21a83f14f14797d2787240c905e, type: 3}
       propertyPath: m_Name
       value: Problem

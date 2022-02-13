@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 4100363339422988320}
   - component: {fileID: 4100363339422988321}
   - component: {fileID: 4100363339422988322}
+  - component: {fileID: 766668486}
   m_Layer: 6
   m_Name: Problem
   m_TagString: Wall
@@ -227,10 +228,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0da7c608a8dd0d47aaecd92d35868c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridPosition: {x: 0, y: 0}
+  gridPosition: {x: 7, y: 2}
   RemainingProblemInSeconds: 15
   remainigPartIndicator: {fileID: 4069109610561724327}
   IsAvailable: 1
+--- !u!114 &766668486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4100363339422988333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f16e1dada0c87c24ea27f541f111b04f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 8828467707026026830, guid: 973134b3ebab8d547910a736faba6405, type: 3}
+  - {fileID: -2296733929868138929, guid: 973134b3ebab8d547910a736faba6405, type: 3}
+  - {fileID: -7090377904815825652, guid: 973134b3ebab8d547910a736faba6405, type: 3}
+  - {fileID: -6007068162567433034, guid: 973134b3ebab8d547910a736faba6405, type: 3}
 --- !u!1 &7427041829301794593
 GameObject:
   m_ObjectHideFlags: 0
