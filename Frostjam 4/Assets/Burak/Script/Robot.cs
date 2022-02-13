@@ -1,9 +1,5 @@
-using Microsoft.Unity.VisualStudio.Editor;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Analytics;
 using Random = UnityEngine.Random;
 
 public class Robot : MonoBehaviour
