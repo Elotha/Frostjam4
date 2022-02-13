@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.U2D.Path;
 using UnityEngine;
 using UnityEngine.Analytics;
+using Random = UnityEngine.Random;
 
 public class GridManager : MonoBehaviour
 {
@@ -180,6 +183,18 @@ public class GridManager : MonoBehaviour
 
             borderTransformA.position = startPoint + new Vector3(-1 * cellSize, -col * cellSize, 0f);
             borderTransformB.position = startPoint + new Vector3((width) * cellSize, -col * cellSize, 0f);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(startPoint, 0.25f);
+        Gizmos.DrawWireSphere(startPoint + width * Vector3Int.right
+                              + height * Vector3Int.down, 0.25f);
+        foreach (var gridItem in gridList)
+        {
+            Gizmos.DrawWireCube(gridItem.Value, new Vector3(cellSize, cellSize, 0f));
         }
     }
 }
