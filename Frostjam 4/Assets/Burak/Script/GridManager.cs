@@ -57,7 +57,7 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         GenerateGrid();
-        GenerateGridBorders();
+        // GenerateGridBorders();
         SpawnRobots();
     }
 

@@ -18,9 +18,11 @@ public class WallBuilder : MonoBehaviour
     private Vector3 lastWallPos;
     private PlayerMovement _playerMovement;
     private bool creating = false;
+    private Animator _animator;
 
     void Start()
     {
+        _animator = GetComponent<Animator>();
         _playerMovement = FindObjectOfType<PlayerMovement>().GetComponent<PlayerMovement>();
     }
 
@@ -29,9 +31,11 @@ public class WallBuilder : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+            //_animator.speed = movementMultiplier;
             StartCoroutine("BuildWallsFor");
             //Physics.IgnoreLayerCollision(6, 7, true);
             creating = true;
+            _animator.speed = 2.0f;
             _playerMovement.multiplierModifier = movementMultiplier;
             lastWallPos = transform.position;
         }
@@ -54,6 +58,7 @@ public class WallBuilder : MonoBehaviour
         yield return new WaitForSeconds(wallBuildingDuration);
         creating = false;
         gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        _animator.speed = 1;
         _playerMovement.multiplierModifier = 1;
     }
     
