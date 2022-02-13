@@ -1,3 +1,4 @@
+using Microsoft.Unity.VisualStudio.Editor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,6 +48,7 @@ public class Robot : MonoBehaviour
     [Tooltip("When at 100, robot becomes sentience and we lose the game or smt. starts with 0")]
     [SerializeField] public float sentience = 0;
     [SerializeField] private float sentienceMultiplier;
+    [SerializeField] private Transform aiSentienceIndicator;
 
     private void Awake()
     {
@@ -325,6 +327,8 @@ public class Robot : MonoBehaviour
                 // GameManager.DetroidBecomeHuman += Time.deltaTime;
                 communicationDuration -= Time.deltaTime;
                 sentience += sentienceMultiplier * Time.deltaTime;
+                aiSentienceIndicator.localScale = new Vector3(sentience / 100f, aiSentienceIndicator.localScale.y, aiSentienceIndicator.localScale.z);
+                aiSentienceIndicator.localPosition = new Vector3(-0.49f + sentience / 100f / 2f, aiSentienceIndicator.localPosition.y, aiSentienceIndicator.localPosition.z);
                 if (communicationDuration < 0)
                 {
                     _robotIndicator.DeactivateCommunicationIndicator();

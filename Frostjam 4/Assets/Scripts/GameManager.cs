@@ -10,10 +10,13 @@ public class GameManager : MonoBehaviour
     public Text leftText;
     public Text timeText;
     public Text aiSentienceText;
+    public Slider aiSentienceSlider;
+    public Image sliderFillImage;
+    public Gradient colorGradient;
     public int problemLeft => GridManager.Instance.problemsList.Count;
     public int gameLastsFor;
+    private float aiHighestSentience = 0f;
     public static GameManager Instance;
-
 
     private void Awake()
     {
@@ -35,25 +38,19 @@ public class GameManager : MonoBehaviour
         UpdateTime();
     }
 
-    private void CountDowner()
-    {
-        if (gameLastsFor > 0)
-        {
-
-            gameLastsFor--;
-            UpdateTime();
-        }
-        else
-        {
-            GameOver();
-        }
-    }
-
     private void Update()
     {
-        UpdateAiSentiencePercent();
+        GameOverCheck();
+        WinCheck();
+
+        UpdateAISentience();
     }
 
+    private void CountDowner()
+    {
+        gameLastsFor--;
+        UpdateTime();
+    }
     private void UpdateTime()
     {
         timeText.text = "Time left: " + gameLastsFor;
@@ -64,25 +61,32 @@ public class GameManager : MonoBehaviour
         leftText.text = "Problems left: " + problemLeft;
     }
 
-    public void UpdateAiSentiencePercent()
+    public void UpdateAISentience()
     {
+        // update AI sentience
         var highestSentience = 0f;
         foreach (var variable in GridManager.Instance.robotList)
             if (highestSentience < variable.Key.sentience)
                 highestSentience = variable.Key.sentience;
 
+        aiHighestSentience = highestSentience;
         aiSentienceText.text = "Maximum AI Sentience: " + (int) highestSentience + "%";
-    }
-    
+        aiSentienceSlider.value = highestSentience;
+        sliderFillImage.color = colorGradient.Evaluate(highestSentience / 100f);
+    }    
 
-    private void GameOver()
+    private void GameOverCheck()
     {
-        if (problemLeft > 0)
+        if ((gameLastsFor <= 0 && problemLeft > 0) || aiHighestSentience >= 100f)
         {
             Debug.Log("Lose");
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-        else
+    }
+
+    private void WinCheck()
+    {
+        if(problemLeft <= 0 && gameLastsFor < 0)
         {
             Debug.Log("Win");
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
