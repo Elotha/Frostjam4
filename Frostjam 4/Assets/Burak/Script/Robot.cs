@@ -134,7 +134,6 @@ public class Robot : MonoBehaviour
 
     private void SetCommunicationPartner(Robot otherRobot)
     {
-        _robotIndicator.ActivateCommunicationIndicator();
         communicationPartner = otherRobot;
         programState = ProgramState.Communicating;
         communicationDuration = CommunicationDurationMax;
@@ -158,7 +157,6 @@ public class Robot : MonoBehaviour
             if ((isAdjacentX ^ isAdjacentY) && thisRobotSeeksPartner)
             {
                 // Debug.Log("Adjacent Problem");
-                _robotIndicator.ActivateMiningIndicator();
                 programState = ProgramState.SolvingProblem;
                 problemPartner = problem;
                 problem.IsAvailable = false;
@@ -310,7 +308,6 @@ public class Robot : MonoBehaviour
                 
                 if (problemDuration < 0 || problemPartner == null)
                 {
-                    _robotIndicator.DeactivateMiningIndicator();
                     programState = ProgramState.WaitingForNextTurn;
                     problemCooldown = problemCooldownMax;
                     problemPartner.IsAvailable = true;
@@ -331,7 +328,6 @@ public class Robot : MonoBehaviour
                 aiSentienceIndicator.localPosition = new Vector3(-0.49f + sentience / 100f / 2f, aiSentienceIndicator.localPosition.y, aiSentienceIndicator.localPosition.z);
                 if (communicationDuration < 0)
                 {
-                    _robotIndicator.DeactivateCommunicationIndicator();
                     programState = ProgramState.WaitingForNextTurn;
                     CommunicatingCooldown = CommunicatingCooldownMax;
                     communicationPartner = null;
@@ -361,13 +357,11 @@ public class Robot : MonoBehaviour
                 problemPartner.IsAvailable = true;
                 problemPartner = null;
                 problemCooldown = CommunicatingCooldownMax;
-                _robotIndicator.DeactivateMiningIndicator();
                 break;
             case ProgramState.Communicating:
                 communicationPartner.communicationDuration = 0;
                 communicationPartner = null;
                 CommunicatingCooldown = CommunicatingCooldownMax;
-                _robotIndicator.DeactivateCommunicationIndicator();
                 break;
         }
     }
