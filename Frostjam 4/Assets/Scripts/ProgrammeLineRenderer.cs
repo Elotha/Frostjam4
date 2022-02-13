@@ -24,7 +24,8 @@ public class ProgrammeLineRenderer : MonoBehaviour
 
     private void Update()
     {
-        Vector3 claimedPosition = _gridManager.gridList[_robot.targetGridPosition];
+        //Vector3 claimedPosition = _gridManager.gridList[_robot.targetGridPosition];
+        Vector3 claimedPosition = _gridManager.gridList[_robot.mainTargetGridPosition];
         if (instance.transform.position != claimedPosition)
         {
             instance.transform.position = claimedPosition;
