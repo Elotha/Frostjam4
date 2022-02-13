@@ -30,11 +30,13 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = 3.55f;
             if (movementVec.x > 0)
             {
+                _animator.SetFloat("idleLocation",1);
                 _animator.SetFloat("horizontalSpeed", 0.75f);
                 _animator.SetFloat("verticalSpeed", 0.75f);
             }
             else
             {
+                _animator.SetFloat("idleLocation",3);
                 _animator.SetFloat("horizontalSpeed", -0.75f);
                 _animator.SetFloat("verticalSpeed", -0.75f);
             }
@@ -50,21 +52,25 @@ public class PlayerMovement : MonoBehaviour
             _animator.SetBool("isMoving", true);
             if (movementVec.x > 0)
             {
+                _animator.SetFloat("idleLocation",1);
                 _animator.SetFloat("horizontalSpeed", 1);
                 _animator.SetFloat("verticalSpeed", 0);
             }
             else if (movementVec.x < 0)
             {
+                _animator.SetFloat("idleLocation",3);
                 _animator.SetFloat("horizontalSpeed", -1);
                 _animator.SetFloat("verticalSpeed", 0);
             }
             else if (movementVec.y > 0)
             {
+                _animator.SetFloat("idleLocation",0);
                 _animator.SetFloat("verticalSpeed", 1);
                 _animator.SetFloat("horizontalSpeed", 0);
             }
             else if (movementVec.y < 0)
             {
+                _animator.SetFloat("idleLocation",2);
                 _animator.SetFloat("verticalSpeed", -1);
                 _animator.SetFloat("horizontalSpeed", 0);
             }
