@@ -29,7 +29,7 @@ public class Robot : MonoBehaviour
 
     [Header("Grid related info")]
     public ProgramState programState;
-    private Vector2Int focusedProblem;
+    private Vector2Int? focusedProblem = null;
 
     
     private Rigidbody2D rigid2D;
