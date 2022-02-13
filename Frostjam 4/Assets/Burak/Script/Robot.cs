@@ -357,6 +357,7 @@ public class Robot : MonoBehaviour
                 problemPartner.IsAvailable = true;
                 problemPartner = null;
                 problemCooldown = CommunicatingCooldownMax;
+                _robotIndicator.DeactivateMiningIndicator();
                 break;
             case ProgramState.Communicating:
                 communicationPartner.communicationDuration = 0;
