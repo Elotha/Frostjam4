@@ -9423,30 +9423,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8549933355635307145, guid: 6e489b098bb10684d85430521e919731, type: 3}
-      propertyPath: m_SortingOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8549933355635307147, guid: 6e489b098bb10684d85430521e919731, type: 3}
-      propertyPath: m_Size.x
-      value: 0.39974737
-      objectReference: {fileID: 0}
-    - target: {fileID: 8549933355635307147, guid: 6e489b098bb10684d85430521e919731, type: 3}
-      propertyPath: m_Size.y
-      value: 0.35756767
-      objectReference: {fileID: 0}
-    - target: {fileID: 8549933355635307147, guid: 6e489b098bb10684d85430521e919731, type: 3}
-      propertyPath: m_Offset.x
-      value: -0.014600992
-      objectReference: {fileID: 0}
-    - target: {fileID: 8549933355635307147, guid: 6e489b098bb10684d85430521e919731, type: 3}
-      propertyPath: m_Offset.y
-      value: 0.11680585
-      objectReference: {fileID: 0}
-    - target: {fileID: 8549933355635307147, guid: 6e489b098bb10684d85430521e919731, type: 3}
-      propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0.10416667
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e489b098bb10684d85430521e919731, type: 3}
 --- !u!1 &1238816727
