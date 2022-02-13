@@ -341,7 +341,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0d8f3e4ff3ad4479349881590fd0d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  robotCount: 5
+  loopTime: 1
+  robotCount: 8
   width: 13
   height: 7
   cellSize: 1

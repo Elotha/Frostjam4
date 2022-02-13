@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
+    [SerializeField] public float loopTime = 1f;
     [SerializeField] private int robotCount = 5;
     [SerializeField] public int width = 13;
     [SerializeField] public int height = 7;
@@ -13,11 +15,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Robot robotPrefab;
 
     public Dictionary<Vector2Int, Vector3> gridList = new Dictionary<Vector2Int, Vector3>();
-    private Dictionary<Robot, Vector2Int> robotList = new Dictionary<Robot, Vector2Int>();
+    public Dictionary<Robot, Vector2Int> robotList = new Dictionary<Robot, Vector2Int>();
     public Dictionary<Robot, Vector2Int> robotTargetList = new Dictionary<Robot, Vector2Int>();
     public Dictionary<Robot, Vector2Int> robotMainTargetList = new Dictionary<Robot, Vector2Int>();
     public List<Vector2Int> objectPositions = new List<Vector2Int>();
     public static GridManager Instance;
+
+    private float timer = 0f;
+    private int step = 0;
 
     private void Awake()
     {
@@ -37,36 +42,81 @@ public class GridManager : MonoBehaviour
     {
         GenerateGrid();
         SpawnRobots();
-        
-        // TODO: to be deleted
-        Stage1();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        timer += Time.deltaTime;
+
+        if(timer >= loopTime)
+        {
+            timer = 0f;
+            step += 1;
+
+            AllRobotsSetTarget();
+            CheckAndSetRobotState();
+            MakeThemActBasedOnState();
+        }
     }
     
-    private void Stage1()
+    private void AllRobotsSetTarget()
+    {
+        for (int i = 0; i < robotList.Count; i++)
+        {
+            // TODO: Search logic is not completed.
+            //foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
+            //    item.Key.SearchProblem();
+
+            Robot robot = robotList.ElementAt(i).Key;
+            
+
+            robot.gridPosition = robot.targetGridPosition;
+            robot.transform.position = gridList[robot.gridPosition];
+            robotList[robot] = robot.gridPosition;
+            
+            // Set new target position
+            // TODO: check state, if ok call the function
+            robot.SetTargetGridPosition();
+            robotTargetList[robot] = robot.targetGridPosition;
+        }
+
+        //foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
+        //{
+        //    // TODO: Search logic is not completed.
+        //    //foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
+        //    //    item.Key.SearchProblem();
+
+        //    // Update grid position
+        //    Robot robot = item.Key;
+        //    robot.gridPosition = robot.targetGridPosition;
+        //    robot.transform.position = gridList[robot.gridPosition];
+        //    robotList[robot] = robot.gridPosition;
+        //    // Set new target position
+        //    robot.SetTargetGridPosition();
+        //    robotTargetList[robot] = robot.targetGridPosition;
+        //}
+    }
+    
+    private void CheckAndSetRobotState()
     {
         foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
-        {
-            //item.Key.SetMainTargetGridPosition();
-            //robotMainTargetList[item.Key] = item.Key.mainTargetGridPosition;
-            item.Key.SetTargetGridPosition();
-            robotTargetList[item.Key] = item.Key.targetGridPosition;
-        }
+            item.Key.CheckIfAnyAdjacentProblem();
+
+        foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
+            item.Key.CheckIfAnyAdjacentRobot();   
+        
+        foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
+            item.Key.CheckIfAnyAdjacentRobotIncoming();
+    }    
+
+    private void MakeThemActBasedOnState()
+    {
+        foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
+            item.Key.ActBasedOnState();
     }
 
-    private void Stage2()
-    {
-        foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
-        {
-            item.Key.DoSmtBasedOnStatus();        
-        }
-        
-    }    
+
     private void SpawnRobots()
     {
         // Spawn robot and log into robotList
@@ -84,7 +134,6 @@ public class GridManager : MonoBehaviour
             }
 
             Robot _robot = Instantiate(robotPrefab, gridList[gridPosition], Quaternion.identity);
-
             _robot.gridPosition = gridPosition;
             _robot.name = "Robot_" + i;
 

@@ -122,10 +122,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72738273fbf6feb418f912e06753eb1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
+  timeBetweenMoves: 0.5
   minDistance: 2
   maxDistance: 4
   distance: 0
   direction: {x: 0, y: 0}
+  scanProblemDistance: 0
   gridPosition: {x: 0, y: 0}
   targetGridPosition: {x: 0, y: 0}
   mainTargetGridPosition: {x: 0, y: 0}

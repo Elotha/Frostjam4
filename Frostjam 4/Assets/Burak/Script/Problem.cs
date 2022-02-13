@@ -8,13 +8,13 @@ public class Problem : MonoBehaviour
 
     private void Awake()
     {
-        GridManager.Instance.objectPositions.Add(gridPosition);
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        GridManager.Instance.objectPositions.Add(gridPosition);
     }
 
     // Update is called once per frame
