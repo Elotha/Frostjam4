@@ -13,13 +13,13 @@ public class ProgrammeLineRenderer : MonoBehaviour
     private void Start()
     {
         instance = Instantiate(_gameObject);
+        _gridManager = GridManager.Instance;
     }
 
     private void Awake()
     {
         _lineRenderer = GetComponent<LineRenderer>();
         _robot = GetComponent<Robot>();
-        _gridManager = GridManager.Instance;
     }
 
     private void Update()

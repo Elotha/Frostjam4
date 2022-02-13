@@ -53,12 +53,12 @@ public class Robot : MonoBehaviour
     private void Awake()
     {
         _robotIndicator = GetComponent<RobotIndicator>();
-        gridManager = GridManager.Instance;
         rigid2D = GetComponent<Rigidbody2D>();
     }
 
     void Start()
     {
+        gridManager = GridManager.Instance;
         Initialize();
     }
 
