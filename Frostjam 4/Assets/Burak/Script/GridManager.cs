@@ -19,7 +19,21 @@ public class GridManager : MonoBehaviour
     public Dictionary<Robot, Vector2Int> robotList = new Dictionary<Robot, Vector2Int>();
     public Dictionary<Robot, Vector2Int> robotTargetList = new Dictionary<Robot, Vector2Int>();
     public Dictionary<Robot, Vector2Int> robotMainTargetList = new Dictionary<Robot, Vector2Int>();
-    public List<Vector2Int> objectPositions = new List<Vector2Int>();
+    public List<Vector2Int> objectPositions
+    {
+        // returns temporary
+        get
+        {
+            var list = new List<Vector2Int>();
+            foreach (var problem in problemsList)
+                list.Add(problem.gridPosition);
+            list.AddRange(blockPositions);
+            return list;
+        }
+    }
+    public List<Vector2Int> blockPositions = new List<Vector2Int>();
+    public List<Problem> problemsList = new List<Problem>();
+    
     public static GridManager Instance;
 
     private float timer = 0f;

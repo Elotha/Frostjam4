@@ -23,6 +23,12 @@ public class Robot : MonoBehaviour
     private int CommunicatingCooldown;
     private float communicationDuration;
     private Robot communicationPartner = null;
+    
+    [SerializeField] private int problemCooldownMax;
+    [SerializeField] private float problemDurationMax;
+    private int problemCooldown;
+    private float problemDuration;
+    private Problem problemPartner = null;
 
     [Header("Grid related info")]
     public Vector2Int gridPosition;
@@ -37,7 +43,6 @@ public class Robot : MonoBehaviour
     private Rigidbody2D rigid2D;
     private GridManager gridManager;
 
-    private int testCounter = 0;
 
     private void Awake()
     {
@@ -89,20 +94,20 @@ public class Robot : MonoBehaviour
         foreach (KeyValuePair<Robot, Vector2Int> item in gridManager.robotList)
         {
             var otherRobot = item.Key;
-            if (otherRobot.IsAvailable != true)
-                continue;
-
+            
+            if (!IsAvailable) continue;
+            if (!otherRobot.IsAvailable) continue;
+            
             var V2 = otherRobot.gridPosition;
             bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
             bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
             bool otherRobotSeeksPartner = (otherRobot.CommunicatingCooldown <= 0);
             bool thisRobotSeeksPartner = (CommunicatingCooldown <= 0);
 
+
             if (item.Key != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
                 Debug.Log("Adjacent Robot");
-                testCounter += 1;
-                otherRobot.testCounter += 1;
                 communicationPartner = otherRobot;
                 otherRobot.communicationPartner = this;
                 programState = ProgramState.Communicating;
@@ -115,7 +120,27 @@ public class Robot : MonoBehaviour
 
     public void CheckIfAnyAdjacentProblem()
     {
-        // logic
+        if (!IsAvailable) return;
+
+        foreach (Problem problem in gridManager.problemsList)
+        {
+                        
+            if (!IsAvailable) continue;
+            if (!problem.IsAvailable) continue;
+            
+            var V2 = problem.gridPosition;
+            bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
+            bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
+
+            if ((isAdjacentX ^ isAdjacentY))
+            {
+                Debug.Log("Adjacent Problem");
+                programState = ProgramState.SolvingProblem;
+                problemPartner = problem;
+                problem.IsAvailable = false;
+                problemDuration = problemDurationMax;
+            }
+        }
     }
 
     public void CheckIfAnyAdjacentRobotIncoming() 
@@ -125,8 +150,9 @@ public class Robot : MonoBehaviour
         foreach (KeyValuePair<Robot, Vector2Int> item in gridManager.robotTargetList)
         {
             var otherRobot = item.Key; 
-            if (otherRobot.IsAvailable != true)     
-                continue;
+                        
+            if (!IsAvailable) continue;
+            if (!otherRobot.IsAvailable) continue;
 
             var V2 = otherRobot.targetGridPosition;
             bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
@@ -137,8 +163,6 @@ public class Robot : MonoBehaviour
             if (otherRobot != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
                 Debug.Log("Adjacent Robot inc");
-                testCounter += 1;
-                otherRobot.testCounter += 1;
                 programState = ProgramState.WaitingAnotherRobot;
                 otherRobot.programState = ProgramState.TargetLock;
             }
@@ -214,6 +238,7 @@ public class Robot : MonoBehaviour
     public void EarlyUpdateState()
     {
         CommunicatingCooldown -= 1;
+        problemCooldown -= 1;
         
         if (programState == ProgramState.TargetLock || programState == ProgramState.WaitingAnotherRobot || programState == ProgramState.WaitingForNextTurn)
             programState = ProgramState.Moving;
@@ -253,14 +278,23 @@ public class Robot : MonoBehaviour
             
             // Special Cases
             case ProgramState.SolvingProblem:
+                // TODO; Slowly it fills up
+                problemDuration -= Time.deltaTime;
+                if (problemDuration < 0)
+                {
+                    programState = ProgramState.WaitingForNextTurn;
+                    problemCooldown = problemCooldownMax;
+                    problemPartner = null;
+                }
                 break;
             case ProgramState.Communicating:
-                // Slowly it fills up
+                // TODO; Slowly it fills up
                 communicationDuration -= Time.deltaTime;
                 if (communicationDuration < 0)
                 {
                     programState = ProgramState.WaitingForNextTurn;
                     CommunicatingCooldown = CommunicatingCooldownMax;
+                    communicationPartner = null;
                 }
                 break;
             case ProgramState.Knockback:
