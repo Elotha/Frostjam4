@@ -40,15 +40,15 @@ public class Robot : MonoBehaviour
     
     private Rigidbody2D rigid2D;
     private GridManager gridManager;
-    private RobotIndicator _robotIndicator;
     [Tooltip("When at 100, robot becomes sentience and we lose the game or smt. starts with 0")]
     [SerializeField] public float sentience = 0;
     [SerializeField] private float sentienceMultiplier;
     [SerializeField] private Transform aiSentienceIndicator;
+    private RobotIndicator robotIndicator;
 
     private void Awake()
     {
-        _robotIndicator = GetComponent<RobotIndicator>();
+        robotIndicator = GetComponent<RobotIndicator>();
         rigid2D = GetComponent<Rigidbody2D>();
     }
 
@@ -130,6 +130,7 @@ public class Robot : MonoBehaviour
 
     private void SetCommunicationPartner(Robot otherRobot)
     {
+        robotIndicator.ActivateCommunicationIndicator();
         communicationPartner = otherRobot;
         programState = ProgramState.Communicating;
         communicationDuration = CommunicationDurationMax;
@@ -153,6 +154,7 @@ public class Robot : MonoBehaviour
             if ((isAdjacentX ^ isAdjacentY) && thisRobotSeeksPartner)
             {
                 // Debug.Log("Adjacent Problem");
+                robotIndicator.ActivateMiningIndicator();
                 programState = ProgramState.SolvingProblem;
                 problemPartner = problem;
                 problem.IsAvailable = false;
@@ -308,6 +310,8 @@ public class Robot : MonoBehaviour
                     problemCooldown = problemCooldownMax;
                     problemPartner.IsAvailable = true;
                     problemPartner = null;
+                    robotIndicator.DeactivateMiningIndicator();
+
                 }
 
                 if (problemPartner != null)
@@ -327,6 +331,7 @@ public class Robot : MonoBehaviour
                     programState = ProgramState.WaitingForNextTurn;
                     CommunicatingCooldown = CommunicatingCooldownMax;
                     communicationPartner = null;
+                    robotIndicator.DeactivateCommunicationIndicator();
                 }
                 break;
             case ProgramState.Knockback:
@@ -352,12 +357,14 @@ public class Robot : MonoBehaviour
             case ProgramState.SolvingProblem:
                 problemPartner.IsAvailable = true;
                 problemPartner = null;
-                problemCooldown = CommunicatingCooldownMax;
+                problemCooldown = problemCooldownMax;
+                robotIndicator.DeactivateMiningIndicator();
                 break;
             case ProgramState.Communicating:
                 communicationPartner.communicationDuration = 0;
                 communicationPartner = null;
                 CommunicatingCooldown = CommunicatingCooldownMax;
+                robotIndicator.DeactivateCommunicationIndicator();
                 break;
         }
     }
