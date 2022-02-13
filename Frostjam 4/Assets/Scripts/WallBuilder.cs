@@ -22,6 +22,7 @@ public class WallBuilder : MonoBehaviour
 
     void Start()
     {
+        _animator = GetComponent<Animator>();
         _playerMovement = FindObjectOfType<PlayerMovement>().GetComponent<PlayerMovement>();
     }
 
