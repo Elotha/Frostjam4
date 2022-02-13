@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 1624567447181756140}
   m_Layer: 8
   m_Name: Robot
-  m_TagString: Untagged
+  m_TagString: Programme
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -280,7 +280,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   length: 3
-  duration: 3
+  duration: 1
   heightCurve:
     serializedVersion: 2
     m_Curve:
@@ -309,22 +309,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
+      time: 0.0014076233
+      value: 0
+      inSlope: 2.8548625
+      outSlope: 2.8548625
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.054335885
     - serializedVersion: 3
-      time: 1
+      time: 1.0192261
       value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 34
+      inSlope: 0.09719184
+      outSlope: 0.09719184
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.61898273
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

@@ -9,7 +9,7 @@ public class ProgrammeLineRenderer : MonoBehaviour
     private GridManager _gridManager;
     private LineRenderer _lineRenderer;
     [SerializeField] private GameObject _gameObject;
-    private GameObject instance;
+    public GameObject instance;
     private void Start()
     {
         instance = Instantiate(_gameObject);

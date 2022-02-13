@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Knockback : MonoBehaviour
@@ -16,17 +17,24 @@ public class Knockback : MonoBehaviour
     [SerializeField]
     private AnimationCurve speedCurve;
 
+
+    private ProgrammeLineRenderer _programmeLineRenderer;
     private Rigidbody2D programmeRb;
+    private Robot _robot;
     private bool haveNoControll = false;
     
     private void Start()
     {
+        _programmeLineRenderer = GetComponent<ProgrammeLineRenderer>();
+        _robot = GetComponent<Robot>();
         programmeRb = GetComponent<Rigidbody2D>();
     }
 
     public void startKnockback(Vector3 direction)
     {
-        programmeRb.bodyType = RigidbodyType2D.Dynamic;
+        deactivateClaimInfo();
+        _robot.programState = ProgramState.Knockback;
+        //programmeRb.bodyType = RigidbodyType2D.Dynamic;
         StartCoroutine(getKnocked(direction));
         haveNoControll = true;
     }
@@ -35,6 +43,7 @@ public class Knockback : MonoBehaviour
     {
         Vector3 origin = transform.position;
         Vector2 targetPos = (Vector2)origin + (Vector2)direction.normalized * length;
+        Debug.Log(origin + " -> " + targetPos);
         float time = 0f;
         Vector3 straightPosition = origin;
         while (time < duration)
@@ -46,12 +55,41 @@ public class Knockback : MonoBehaviour
             float yCurve = heightCurve.Evaluate(ratio);
             
             Vector2 positionWithHeight = new Vector2(straightPosition.x, straightPosition.y + yCurve);
+            Debug.Log(positionWithHeight);
             programmeRb.MovePosition(positionWithHeight);
             yield return null;
         }
         programmeRb.velocity = Vector2.zero;
         haveNoControll = false;
-        programmeRb.bodyType = RigidbodyType2D.Static;
+        _robot.programState = ProgramState.WaitingForNextTurn;
+        findClosestGrid();
+        activateClaimInfo();
+        //programmeRb.bodyType = RigidbodyType2D.Static;
+    }
+
+    void activateClaimInfo()
+    {
+        _programmeLineRenderer.enabled = true;
+        _programmeLineRenderer.instance.SetActive(true);
+    }
+    void deactivateClaimInfo()
+    {
+        _programmeLineRenderer.enabled = false;
+        _programmeLineRenderer.instance.SetActive(false);
+    }
+
+    private void findClosestGrid()
+    {
+        List<float> distances = new List<float>();
+        
+        for (int i = 0; i < GridManager.Instance.gridList.Count; i++)
+        {
+            distances.Add(Vector3.Distance(transform.position, GridManager.Instance.gridList.ElementAt(i).Value));
+        }
+
+        int minIndex = distances.IndexOf(distances.Min());
+        transform.position = GridManager.Instance.gridList.ElementAt(minIndex).Value;
+        _robot.gridPosition = GridManager.Instance.gridList.ElementAt(minIndex).Key;
     }
 
     /*
