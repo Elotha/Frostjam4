@@ -43,10 +43,11 @@ public class Robot : MonoBehaviour
     
     private Rigidbody2D rigid2D;
     private GridManager gridManager;
-
+    private RobotIndicator _robotIndicator;
 
     private void Awake()
     {
+        _robotIndicator = GetComponent<RobotIndicator>();
         gridManager = GridManager.Instance;
         rigid2D = GetComponent<Rigidbody2D>();
     }
@@ -219,7 +220,7 @@ public class Robot : MonoBehaviour
 
     public void SetTargetGridPosition()
     {
-        
+        _robotIndicator.DeactivateCommunicationIndicator();
         // TODO: Check if grid position is equal to main target
         if (gridPosition == mainTargetGridPosition)
         {
@@ -305,6 +306,7 @@ public class Robot : MonoBehaviour
                 break;
             case ProgramState.Communicating:
                 // TODO; Slowly it fills up
+                _robotIndicator.ActivateCommunicationIndicator();
                 communicationDuration -= Time.deltaTime;
                 if (communicationDuration < 0)
                 {
