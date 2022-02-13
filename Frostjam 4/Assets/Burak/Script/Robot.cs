@@ -20,6 +20,7 @@ public class Robot : MonoBehaviour
     [Tooltip("How many turns inbetween two communications")]
     [SerializeField] private int CommunicatingCooldownMax;
     private int CommunicatingCooldown;
+    private float communicationDuration;
 
     [Header("Grid related info")]
     public Vector2Int gridPosition;
@@ -30,7 +31,7 @@ public class Robot : MonoBehaviour
     public ProgramState programState;
     private Vector2Int focusedProblem;
 
-
+    
     private Rigidbody2D rigid2D;
     private GridManager gridManager;
 
@@ -91,15 +92,19 @@ public class Robot : MonoBehaviour
             var V2 = item.Value;
             bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
             bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
+            bool otherRobotSeeksPartner = (item.Key.CommunicatingCooldown <= 0);
+            bool thisRobotSeeksPartner = (CommunicatingCooldown <= 0);
 
-            if (item.Key != this && (isAdjacentX ^ isAdjacentY))
+            if (item.Key != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
                 Debug.Log("Adjacent Robot");
                 testCounter += 1;
                 item.Key.testCounter += 1;
                 // TODO: There may be some conditions for communicating
                 programState = ProgramState.Communicating;
+                communicationDuration = 2.5f;
                 item.Key.programState = ProgramState.Communicating;
+                item.Key.communicationDuration = 2.5f;
             }
         }
     }
@@ -121,8 +126,10 @@ public class Robot : MonoBehaviour
             var V2 = item.Value;
             bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
             bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
+            bool otherRobotSeeksPartner = (item.Key.CommunicatingCooldown <= 0);
+            bool thisRobotSeeksPartner = (CommunicatingCooldown <= 0);
 
-            if (item.Key != this && (isAdjacentX ^ isAdjacentY))
+            if (item.Key != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
                 Debug.Log("Adjacent Robot inc");
                 testCounter += 1;
@@ -201,6 +208,8 @@ public class Robot : MonoBehaviour
 
     public void EarlyUpdateState()
     {
+        CommunicatingCooldown -= 1;
+        
         if (programState == ProgramState.TargetLock || programState == ProgramState.WaitingAnotherRobot || programState == ProgramState.WaitingForNextTurn)
             programState = ProgramState.Moving;
     }
@@ -208,23 +217,18 @@ public class Robot : MonoBehaviour
     
     public void ActBasedOnState()
     {
+        Debug.Log(programState);
+
         switch (programState)
         {
             case ProgramState.TargetLock:
             case ProgramState.WaitingAnotherRobot:
-                Debug.Log(programState);
                 break;
             case ProgramState.Knockback:
                 break;
             case ProgramState.Moving:
                 break;
             case ProgramState.Communicating:
-                Debug.Log("Communicated");
-                if (testCounter > 0)
-                    testCounter -= 1;
-                else
-                    programState = ProgramState.Moving;
-                //Debug.LogError(this.name + " state 2");
                 break;
             case ProgramState.SolvingProblem:
                 Debug.LogError(this.name + " state 2");
@@ -247,11 +251,19 @@ public class Robot : MonoBehaviour
             case ProgramState.SolvingProblem:
                 break;
             case ProgramState.Communicating:
+                // Slowly it fills up
+                communicationDuration -= Time.deltaTime;
+                if (communicationDuration < 0)
+                {
+                    programState = ProgramState.WaitingForNextTurn;
+                    CommunicatingCooldown = CommunicatingCooldownMax;
+                }
                 break;
             case ProgramState.Knockback:
                 break;
         }
     }
+
 }
 
 
