@@ -453,7 +453,7 @@ MonoBehaviour:
   leftText: {fileID: 1752802934}
   timeText: {fileID: 937817091}
   problemLeft: 0
-  gameLastsFor: 10
+  gameLastsFor: 50
 --- !u!4 &609012831
 Transform:
   m_ObjectHideFlags: 0
