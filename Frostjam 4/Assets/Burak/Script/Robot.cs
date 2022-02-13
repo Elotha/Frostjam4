@@ -1,28 +1,40 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
+using Random = UnityEngine.Random;
 
 public class Robot : MonoBehaviour
 {
-    [SerializeField] private float speed;
+    public bool IsAvailableToMove => (programState == ProgramState.Moving || programState == ProgramState.TargetLock);
+    public bool IsAvailable => (programState == ProgramState.Moving);
+    
+    [Header("Movement AI Settings")]
+    private float speed;
     [SerializeField] private int minDistance;
     [SerializeField] private int maxDistance;
     [SerializeField] public int distance;
     [SerializeField] public Vector2Int direction;
-    [SerializeField] private float scanProblemMultiplier;
     
-    private float scanProblemDistance;
+    [Tooltip("How many turns inbetween two communications")]
+    [SerializeField] private int CommunicatingCooldownMax;
+    private int CommunicatingCooldown;
 
+    [Header("Grid related info")]
     public Vector2Int gridPosition;
     public Vector2Int targetGridPosition;
     public Vector2Int mainTargetGridPosition;
 
+    [Header("Grid related info")]
     public ProgramState programState;
-
     private Vector2Int focusedProblem;
+
 
     private Rigidbody2D rigid2D;
     private GridManager gridManager;
+
+    private int testCounter = 0;
 
     private void Awake()
     {
@@ -45,14 +57,16 @@ public class Robot : MonoBehaviour
 
         programState = ProgramState.Moving;
         speed = (1f / gridManager.loopTime) / gridManager.cellSize;
-        scanProblemDistance = gridManager.cellSize * scanProblemMultiplier;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         GoToTargetGridPosition();
+
+        ContinuousActBasedOnState();
     }
+
 
     public void GoToTargetGridPosition()
     {
@@ -64,43 +78,14 @@ public class Robot : MonoBehaviour
         }
     }
 
-    public void ActBasedOnState()
-    {
-        switch (programState)
-        {
-            case ProgramState.TargetLock:
-                break;
-            case ProgramState.WaitingAnotherRobot:
-                Debug.Log("Waited");
-                programState = ProgramState.Moving;
-                break;
-            case ProgramState.Knockback:
-                break;
-            case ProgramState.Moving:
-                break;
-            case ProgramState.Communicating:
-                Debug.Log("Communicated");
-                programState = ProgramState.Moving;
-                //Debug.LogError(this.name + " state 2");
-                break;
-            case ProgramState.SolvingProblem:
-                Debug.LogError(this.name + " state 2");
-                break;
-        }
-    }
-
-    public bool IsAvailable()
-    {
-        return programState == ProgramState.Moving;
-    }
-
+    
     public void CheckIfAnyAdjacentRobot()
     {
-        if (!IsAvailable()) return;
+        if (!IsAvailable) return;
 
         foreach (KeyValuePair<Robot, Vector2Int> item in gridManager.robotList)
         {
-            if (item.Key.IsAvailable() != true)
+            if (item.Key.IsAvailable != true)
                 continue;
 
             var V2 = item.Value;
@@ -109,6 +94,9 @@ public class Robot : MonoBehaviour
 
             if (item.Key != this && (isAdjacentX ^ isAdjacentY))
             {
+                Debug.Log("Adjacent Robot");
+                testCounter += 1;
+                item.Key.testCounter += 1;
                 // TODO: There may be some conditions for communicating
                 programState = ProgramState.Communicating;
                 item.Key.programState = ProgramState.Communicating;
@@ -123,11 +111,11 @@ public class Robot : MonoBehaviour
 
     public void CheckIfAnyAdjacentRobotIncoming() 
     {
-        if (!IsAvailable()) return;
+        if (!IsAvailable) return;
 
         foreach (KeyValuePair<Robot, Vector2Int> item in gridManager.robotTargetList)
         {
-            if (item.Key.IsAvailable() != true)     
+            if (item.Key.IsAvailable != true)     
                 continue;
 
             var V2 = item.Value;
@@ -136,6 +124,9 @@ public class Robot : MonoBehaviour
 
             if (item.Key != this && (isAdjacentX ^ isAdjacentY))
             {
+                Debug.Log("Adjacent Robot inc");
+                testCounter += 1;
+                item.Key.testCounter += 1;
                 // TODO: There may be some conditions for waiting
                 programState = ProgramState.WaitingAnotherRobot;
                 item.Key.programState = ProgramState.TargetLock;
@@ -180,7 +171,6 @@ public class Robot : MonoBehaviour
         // TODO: Check if grid position is equal to main target
         if (gridPosition == mainTargetGridPosition)
         {
-            Debug.Log("Set new target");
             SetMainTargetGridPosition();
             gridManager.robotMainTargetList[this] = mainTargetGridPosition;
         }
@@ -208,11 +198,68 @@ public class Robot : MonoBehaviour
         //    // gridManager.robotMainTargetList[this] = mainTargetGridPosition;
         //}
     }
+
+    public void EarlyUpdateState()
+    {
+        if (programState == ProgramState.TargetLock || programState == ProgramState.WaitingAnotherRobot || programState == ProgramState.WaitingForNextTurn)
+            programState = ProgramState.Moving;
+    }
+    
+    
+    public void ActBasedOnState()
+    {
+        switch (programState)
+        {
+            case ProgramState.TargetLock:
+            case ProgramState.WaitingAnotherRobot:
+                Debug.Log(programState);
+                break;
+            case ProgramState.Knockback:
+                break;
+            case ProgramState.Moving:
+                break;
+            case ProgramState.Communicating:
+                Debug.Log("Communicated");
+                if (testCounter > 0)
+                    testCounter -= 1;
+                else
+                    programState = ProgramState.Moving;
+                //Debug.LogError(this.name + " state 2");
+                break;
+            case ProgramState.SolvingProblem:
+                Debug.LogError(this.name + " state 2");
+                break;
+        }
+    }
+    
+    
+    private void ContinuousActBasedOnState()
+    {  
+        switch (programState)
+        {
+            case ProgramState.WaitingForNextTurn:
+            case ProgramState.Moving:
+            case ProgramState.WaitingAnotherRobot:
+            case ProgramState.TargetLock:
+                break;
+            
+            // Special Cases
+            case ProgramState.SolvingProblem:
+                break;
+            case ProgramState.Communicating:
+                break;
+            case ProgramState.Knockback:
+                break;
+        }
+    }
 }
+
+
+
 
 public enum ProgramState
 {
-    None,
+    WaitingForNextTurn,
     Moving,
     SolvingProblem,
     WaitingAnotherRobot,

@@ -53,7 +53,7 @@ public class GridManager : MonoBehaviour
         {
             timer = 0f;
             step += 1;
-
+            
             AllRobotsSetTarget();
             CheckAndSetRobotState();
             MakeThemActBasedOnState();
@@ -67,8 +67,10 @@ public class GridManager : MonoBehaviour
             // TODO: Search logic is not completed.
             //foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
             //    item.Key.SearchProblem();
-
             Robot robot = robotList.ElementAt(i).Key;
+
+            robot.EarlyUpdateState();
+            if (robot.IsAvailableToMove == false) return;
             robot.gridPosition = robot.targetGridPosition;
             robot.transform.position = gridList[robot.gridPosition];
             robotList[robot] = robot.gridPosition;
