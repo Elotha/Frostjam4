@@ -1,155 +1,211 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class Robot : MonoBehaviour
 {
-    [Header("Settings")]
     [SerializeField] private float speed;
     [SerializeField] private int minDistance;
     [SerializeField] private int maxDistance;
-    [SerializeField] private Vector2 xBound;
-    [SerializeField] private Vector2 yBound;
-    [SerializeField] private float checkProblemRadius = 2f;
-    [SerializeField] private Problem myProblem;
-
-    [Header("Internal Parameters")]
-    [SerializeField] private Vector3 targetPosition;
-    [SerializeField] private Vector3 direction;
     [SerializeField] private int distance;
-    [SerializeField] private bool isMoving;
+    [SerializeField] public Vector2Int direction;
+    [SerializeField] private float scanProblemDistance;
 
-    [Header("Prefab References")]
-    [SerializeField] private GameObject claimSeal;
-    
-    private GameObject sealInstance;
-    private LineRenderer _lineRenderer;
-    private Animator _animator;
-    private GameManager _gameManager;
+    public Vector2Int gridPosition;
+    public Vector2Int targetGridPosition;
+    public Vector2Int mainTargetGridPosition;
+
+    public ProgramState programState;
+
+    private Vector2Int focusedProblem;
+    private GridManager gridManager;
+
+    private void Awake()
+    {
+        gridManager = GridManager.Instance;   
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        _gameManager = FindObjectOfType<GameManager>().GetComponent<GameManager>();
-        _animator = GetComponent<Animator>();
-        _lineRenderer = GetComponent<LineRenderer>();
-        sealInstance = Instantiate(claimSeal, transform.position, claimSeal.transform.rotation);
-        sealInstance.SetActive(false);
-        myProblem = null;
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        targetGridPosition = gridPosition;
+        gridManager.robotTargetList[this] = targetGridPosition;
+        mainTargetGridPosition = gridPosition;
+        gridManager.robotMainTargetList[this] = mainTargetGridPosition;
+
+        programState = ProgramState.Moving;
+        speed = (1f / gridManager.loopTime) / gridManager.cellSize;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isMoving == false)
+        GoToTargetGridPosition();
+    }
+
+    public void GoToTargetGridPosition()
+    {
+        if (programState == ProgramState.Moving || programState == ProgramState.TargetLock)
         {
-            SetTargetPosition();
+            Vector3 directionV3 = new Vector3(direction.x, -direction.y, 0f);
+            transform.position += directionV3 * speed * Time.deltaTime;
         }
-        
-        GoToTargetPosition();
-        CheckProblemAround();
     }
 
-    private void FixedUpdate()
+    public void ActBasedOnState()
     {
-        _lineRenderer.SetPosition(0, transform.position);
-    }
-
-    private void CheckProblemAround()
-    {
-        Vector2 center = new Vector2(transform.position.x, transform.position.y);
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(center, checkProblemRadius);
-        List<Transform> problemList = new List<Transform>();
-        foreach (var hitCollider in hitColliders)
+        switch (programState)
         {
-            if(hitCollider.gameObject.TryGetComponent(out Problem problem))
+            case ProgramState.TargetLock:
+                break;
+            case ProgramState.WaitingAnotherRobot:
+                Debug.Log("Waited");
+                programState = ProgramState.Moving;
+                break;
+            case ProgramState.Knockback:
+                break;
+            case ProgramState.Moving:
+                break;
+            case ProgramState.Communicating:
+                Debug.Log("Communicated");
+                programState = ProgramState.Moving;
+                //Debug.LogError(this.name + " state 2");
+                break;
+            case ProgramState.SolvingProblem:
+                Debug.LogError(this.name + " state 2");
+                break;
+        }
+    }
+
+    public bool IsAvailable()
+    {
+        return programState == ProgramState.Moving;
+    }
+
+    public void CheckIfAnyAdjacentRobot()
+    {
+        if (!IsAvailable()) return;
+
+        foreach (KeyValuePair<Robot, Vector2Int> item in gridManager.robotList)
+        {
+            if (item.Key.IsAvailable() != true)
+                continue;
+
+            var V2 = item.Value;
+            bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
+            bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
+
+            if (item.Key != this && (isAdjacentX ^ isAdjacentY))
             {
-                problemList.Add(problem.transform);
-                Debug.Log("Need to sleep, check this later");
-                Debug.DrawLine(transform.position, problem.transform.position);
+                // TODO: There may be some conditions for communicating
+                programState = ProgramState.Communicating;
+                item.Key.programState = ProgramState.Communicating;
             }
         }
-
     }
 
-    private void GoToTargetPosition()
+    public void CheckIfAnyAdjacentProblem()
     {
-        if (isMoving == true)
-        {
-            transform.position += direction * speed * Time.deltaTime;
-            _animator.SetFloat("HorizontalSpeed", direction.x);
-            _animator.SetFloat("VerticalSpeed", direction.y);
-        }
+        // logic
+    }
 
-        if(Vector3.Distance(transform.position, targetPosition) <= direction.magnitude * speed * Time.deltaTime)
+    public void CheckIfAnyAdjacentRobotIncoming() 
+    {
+        if (!IsAvailable()) return;
+
+        foreach (KeyValuePair<Robot, Vector2Int> item in gridManager.robotTargetList)
         {
-            transform.position = targetPosition;
-            isMoving = false;
-            _animator.SetBool("isMoving", false);
+            if (item.Key.IsAvailable() != true)     
+                continue;
+
+            var V2 = item.Value;
+            bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1;
+            bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1;
+
+            if (item.Key != this && (isAdjacentX ^ isAdjacentY))
+            {
+                // TODO: There may be some conditions for waiting
+                programState = ProgramState.WaitingAnotherRobot;
+                item.Key.programState = ProgramState.TargetLock;
+            }
         }
     }
 
-    // BE CAREFUL, RECURSIVE FUNCTION
-    private void SetTargetPosition()
+    public void SetMainTargetGridPosition()
     {
-        sealInstance.SetActive(false);
-        
-        // return if object is moving
-        if (isMoving == true)  return;
         // get random x or y direction (0 or 1)
-        int _random = Random.Range(0, 2);
+        int _randomAxis = Random.Range(0, 2);
         // get random direction
-        int xDirection = Random.Range(-1, 2);
-        int yDirection = Random.Range(-1, 2);
-        direction = _random == 0 ? new Vector3(xDirection, 0f, 0f) : new Vector3(0f, yDirection, 0f);
+        int _randomDirection = Random.Range(0, 2);
+
+        direction = _randomAxis == 0 ?  new Vector2Int(_randomDirection == 0 ? 1 : -1, 0) :
+                                        new Vector2Int(0, _randomDirection == 0 ? 1 : -1);
         // get random distance
         distance = Random.Range(minDistance, maxDistance + 1);
-        // set target position
-        targetPosition = transform.position + direction * distance;
+
+        if (focusedProblem != null)
+        {
+
+        }
+
+        // set main target grid position
+        mainTargetGridPosition = gridPosition + direction * distance;
+        gridManager.robotMainTargetList[this] = mainTargetGridPosition;
 
         // if target is in bounding box set object is moving, otherwise set another target position
-        if (isTargetInBoundingBox() == true)
+        if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == true)
         {
-            _animator.SetBool("isMoving", true);
-            isMoving = true;
+            return;
         }
-        else if (isTargetInBoundingBox() == false)
+        else if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == false)
         {
-            SetTargetPosition();
+            SetMainTargetGridPosition();
         }
-
-        ClaimGrid(targetPosition);
     }
 
-    private void ClaimGrid(Vector3 positionToBeClaimed)
+    public void SetTargetGridPosition()
     {
-        _lineRenderer.SetPosition(1, positionToBeClaimed);
-        sealInstance.transform.position = positionToBeClaimed;
-        sealInstance.SetActive(true);
-    }
-
-    private bool isTargetInBoundingBox()
-    {
-        if (targetPosition.x >= xBound.x && targetPosition.x <= xBound.y && targetPosition.y >= yBound.x && targetPosition.y <= yBound.y)
+        // TODO: Check if grid position is equal to main target
+        if (gridPosition == mainTargetGridPosition)
         {
-            return true;
+            Debug.Log("Set new target");
+            SetMainTargetGridPosition();
+            gridManager.robotMainTargetList[this] = mainTargetGridPosition;
         }
-        else
-        {
-            return false;
+        
+        if(gridManager.gridList.ContainsKey(gridPosition + direction)) {
+            targetGridPosition = gridPosition + direction;
+            gridManager.robotTargetList[this] = targetGridPosition;
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void SearchProblem()
     {
-        if (collision.gameObject.TryGetComponent(out Problem problem))
+        // TODO: update focused problem.
+
+        Vector2 rayDirection = (Vector2)direction;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, scanProblemDistance);
+
+        if(hit.transform.TryGetComponent(out Problem problem))
         {
-            _gameManager.problemLeft--;
-            _gameManager.UpdateProblemLeft();
-            Debug.Log("Collided with problem and destroyed.");
-            Destroy(problem.gameObject, 0.25f);
-            myProblem = null;
+            // mainTargetGridPosition = problem.gridPosition;
+            // gridManager.robotMainTargetList[this] = mainTargetGridPosition;
         }
     }
+}
+
+public enum ProgramState
+{
+    None,
+    Moving,
+    SolvingProblem,
+    WaitingAnotherRobot,
+    Communicating,
+    TargetLock,
+    Knockback
 }
