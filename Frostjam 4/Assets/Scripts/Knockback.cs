@@ -92,7 +92,8 @@ public class Knockback : MonoBehaviour
         int minIndex = distances.IndexOf(distances.Min());
         transform.position = GridManager.Instance.gridList.ElementAt(minIndex).Value;
         _robot.gridPosition = GridManager.Instance.gridList.ElementAt(minIndex).Key;
-        _robot.targetGridPosition = GridManager.Instance.gridList.ElementAt(minIndex).Key;
+        _robot.targetGridPosition = _robot.gridPosition;
+        _robot.SetMainTargetGridPosition();
     }
 
     /*
