@@ -300,13 +300,15 @@ MonoBehaviour:
   distance: 0
   direction: {x: 0, y: 0}
   CommunicatingCooldownMax: 3
-  CommunicationDurationMax: 1.5
+  CommunicationDurationMax: 6.5
   problemCooldownMax: 3
   problemDurationMax: 1.5
   gridPosition: {x: 0, y: 0}
   targetGridPosition: {x: 0, y: 0}
   mainTargetGridPosition: {x: 0, y: 0}
   programState: 0
+  sentience: 0
+  sentienceMultiplier: 2
 --- !u!114 &5103096934416622540
 MonoBehaviour:
   m_ObjectHideFlags: 0
