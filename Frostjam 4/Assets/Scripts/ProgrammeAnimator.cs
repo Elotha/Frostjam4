@@ -7,16 +7,18 @@ public class ProgrammeAnimator : MonoBehaviour
 {
     private Vector2Int direction;
     private Animator _animator;
+    private Robot _robot;
 
     private void Start()
     {
         _animator = GetComponent<Animator>();
+        _robot = GetComponent<Robot>();
         direction = GetComponent<Robot>().direction;
     }
 
     private void Update()
     {
-        if (direction.x == 0 && direction.y == 0)
+        if (_robot.direction.x == 0 && _robot.direction.y == 0)
         {
             _animator.SetBool("isMoving", false);
             _animator.SetFloat("HorizontalSpeed", 0f);
@@ -25,22 +27,22 @@ public class ProgrammeAnimator : MonoBehaviour
         else
         {
             _animator.SetBool("isMoving", true);
-            if (direction.x > 0)
+            if (_robot.direction.x > 0)
             {
                 _animator.SetFloat("HorizontalSpeed", 1f);
                 _animator.SetFloat("VerticalSpeed", 0f);
             }
-            else if (direction.x < 0)
+            else if (_robot.direction.x < 0)
             {
                 _animator.SetFloat("HorizontalSpeed", -1f);
                 _animator.SetFloat("VerticalSpeed", 0f);
             }
-            else if (direction.y > 0)
+            else if (_robot.direction.y > 0)
             {
                 _animator.SetFloat("VerticalSpeed", 1f);
                 _animator.SetFloat("HorizontalSpeed", 0f);
             }
-            else if (direction.y < 0)
+            else if (_robot.direction.y < 0)
             {
                 _animator.SetFloat("VerticalSpeed", -1f);
                 _animator.SetFloat("HorizontalSpeed", 0f);

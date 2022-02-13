@@ -427,9 +427,9 @@ GameObject:
   - component: {fileID: -2102201950251429678}
   - component: {fileID: 3143704485527108599}
   - component: {fileID: 1624567447181756140}
-  - component: {fileID: -6933644675504029293}
   - component: {fileID: -2137740610630099479}
   - component: {fileID: 3968570978704220093}
+  - component: {fileID: 3391025518495589148}
   m_Layer: 8
   m_Name: Robot
   m_TagString: Programme
@@ -772,25 +772,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!95 &-6933644675504029293
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7665251458429364383}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: bbff6adc374fe564985ae456e8939e6d, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &-2137740610630099479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,3 +798,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   indicatorC: {fileID: 337111217930170636}
   indicatorM: {fileID: 3485799373273527822}
+--- !u!95 &3391025518495589148
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7665251458429364383}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c6104ca2fc992f14c99d7530b7ea72de, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

@@ -44,11 +44,11 @@ public class GridManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            // DontDestroyOnLoad(this.gameObject);
         }
         else if (Instance != this)
         {
-            Destroy(this.gameObject);
+            // Destroy(this.gameObject);
         }
     }
 
