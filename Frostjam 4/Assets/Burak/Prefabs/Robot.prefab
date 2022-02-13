@@ -131,6 +131,9 @@ MonoBehaviour:
   distance: 0
   direction: {x: 0, y: 0}
   CommunicatingCooldownMax: 3
+  CommunicationDurationMax: 1.5
+  problemCooldownMax: 3
+  problemDurationMax: 1.5
   gridPosition: {x: 0, y: 0}
   targetGridPosition: {x: 0, y: 0}
   mainTargetGridPosition: {x: 0, y: 0}
@@ -148,6 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameObject: {fileID: 2048547273146580409, guid: c65a469df000da4489a64f3c5cde8ec6, type: 3}
+  instance: {fileID: 0}
 --- !u!120 &-2102201950251429678
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -280,7 +284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   length: 3
-  duration: 1
+  duration: 1.5
   heightCurve:
     serializedVersion: 2
     m_Curve:

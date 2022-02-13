@@ -14,6 +14,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] public Vector3 startPoint;
 
     [SerializeField] private Robot robotPrefab;
+    [SerializeField] private GameObject borderPrefab;
 
     public Dictionary<Vector2Int, Vector3> gridList = new Dictionary<Vector2Int, Vector3>();
     public Dictionary<Robot, Vector2Int> robotList = new Dictionary<Robot, Vector2Int>();
@@ -56,8 +57,11 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         GenerateGrid();
+        GenerateGridBorders();
         SpawnRobots();
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -153,6 +157,29 @@ public class GridManager : MonoBehaviour
                 Vector3 worldPosition = startPoint + new Vector3(row * cellSize, -col * cellSize, 0f);
                 gridList.Add(gridPosition, worldPosition);
             }
+        }
+    }
+    
+    private void GenerateGridBorders()
+    {
+        // Top, Down
+        for (int row = -1; row < width + 1; row++)
+        {
+            var borderTransformA = Instantiate(borderPrefab).transform;
+            var borderTransformB = Instantiate(borderPrefab).transform;
+
+            borderTransformA.position = startPoint + new Vector3(row * cellSize, 1 * cellSize, 0f);
+            borderTransformB.position = startPoint + new Vector3(row * cellSize, -(height - 0) * cellSize, 0f);
+        }
+        
+        // Left, Right
+        for (int col = 0; col < height; col++)
+        {
+            var borderTransformA = Instantiate(borderPrefab).transform;
+            var borderTransformB = Instantiate(borderPrefab).transform;
+
+            borderTransformA.position = startPoint + new Vector3(-1 * cellSize, -col * cellSize, 0f);
+            borderTransformB.position = startPoint + new Vector3((width) * cellSize, -col * cellSize, 0f);
         }
     }
 }
