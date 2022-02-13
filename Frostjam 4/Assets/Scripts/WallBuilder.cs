@@ -32,7 +32,7 @@ public class WallBuilder : MonoBehaviour
             StartCoroutine("BuildWallsFor");
             //Physics.IgnoreLayerCollision(6, 7, true);
             creating = true;
-            _playerMovement.multiplier = movementMultiplier;
+            _playerMovement.multiplierModifier = movementMultiplier;
             lastWallPos = transform.position;
         }
         /*
@@ -54,7 +54,7 @@ public class WallBuilder : MonoBehaviour
         yield return new WaitForSeconds(wallBuildingDuration);
         creating = false;
         gameObject.GetComponent<SpriteRenderer>().color = Color.white;
-        _playerMovement.multiplier = 1;
+        _playerMovement.multiplierModifier = 1;
     }
     
     /*

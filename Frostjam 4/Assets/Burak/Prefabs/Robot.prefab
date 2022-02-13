@@ -217,9 +217,9 @@ MonoBehaviour:
   distance: 0
   direction: {x: 0, y: 0}
   CommunicatingCooldownMax: 3
-  CommunicationDurationMax: 0
-  problemCooldownMax: 0
-  problemDurationMax: 0
+  CommunicationDurationMax: 1.5
+  problemCooldownMax: 3
+  problemDurationMax: 1.5
   gridPosition: {x: 0, y: 0}
   targetGridPosition: {x: 0, y: 0}
   mainTargetGridPosition: {x: 0, y: 0}
@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   length: 3
-  duration: 1
+  duration: 1.5
   heightCurve:
     serializedVersion: 2
     m_Curve:
@@ -384,8 +384,26 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.010962219
     - serializedVersion: 3
+      time: 0.2
+      value: 0.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.20031507
+    - serializedVersion: 3
       time: 1
-      value: 1
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0

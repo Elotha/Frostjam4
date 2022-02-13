@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float multiplier = 1f;
+    [NonSerialized]public float multiplierModifier = 1f;
     public Vector2 movementVec;
     private float moveSpeed = 5f;
     //public float rayLength = 2.29f;
@@ -97,6 +98,6 @@ public class PlayerMovement : MonoBehaviour
             playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * Time.deltaTime);
         }
         */
-        playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * multiplier * Time.deltaTime);
+        playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * multiplier * multiplierModifier * Time.deltaTime);
     }
 }
