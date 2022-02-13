@@ -27,9 +27,11 @@ public class Robot : MonoBehaviour
     private GameObject sealInstance;
     private LineRenderer _lineRenderer;
     private Animator _animator;
+    private GameManager _gameManager;
     // Start is called before the first frame update
     void Start()
     {
+        _gameManager = FindObjectOfType<GameManager>().GetComponent<GameManager>();
         _animator = GetComponent<Animator>();
         _lineRenderer = GetComponent<LineRenderer>();
         sealInstance = Instantiate(claimSeal, transform.position, claimSeal.transform.rotation);
@@ -143,6 +145,8 @@ public class Robot : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out Problem problem))
         {
+            _gameManager.problemLeft--;
+            _gameManager.UpdateProblemLeft();
             Debug.Log("Collided with problem and destroyed.");
             Destroy(problem.gameObject, 0.25f);
             myProblem = null;
