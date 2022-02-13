@@ -7,8 +7,9 @@ using Random = UnityEngine.Random;
 
 public class Robot : MonoBehaviour
 {
-    public bool IsAvailableToMove => (programState == ProgramState.Moving || programState == ProgramState.TargetLock);
+    public bool IsMoving => (programState == ProgramState.Moving || programState == ProgramState.TargetLock || programState == ProgramState.OutOfGridPosition);
     public bool IsAvailable => (programState == ProgramState.Moving);
+
     
     [Header("Movement AI Settings")]
     private float speed;
@@ -78,7 +79,7 @@ public class Robot : MonoBehaviour
 
     public void GoToTargetGridPosition()
     {
-        if (programState == ProgramState.Moving || programState == ProgramState.TargetLock)
+        if (IsMoving)
         {
             Vector2 directionV2 = new Vector2(direction.x, -direction.y);
             Vector2 newPosition = rigid2D.position + directionV2 * speed * Time.fixedDeltaTime;
@@ -86,7 +87,19 @@ public class Robot : MonoBehaviour
         }
     }
 
-    
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log(other.tag);
+        if (other.CompareTag("Wall") && programState != ProgramState.OutOfGridPosition)
+        {
+            programState = ProgramState.OutOfGridPosition;
+            direction = -direction;
+            targetGridPosition = gridPosition;
+            mainTargetGridPosition = targetGridPosition;
+        }
+    }
+
     public void CheckIfAnyAdjacentRobot()
     {
         if (!IsAvailable) return;
@@ -107,7 +120,7 @@ public class Robot : MonoBehaviour
 
             if (item.Key != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
-                Debug.Log("Adjacent Robot");
+                // Debug.Log("Adjacent Robot");
                 communicationPartner = otherRobot;
                 otherRobot.communicationPartner = this;
                 programState = ProgramState.Communicating;
@@ -134,7 +147,7 @@ public class Robot : MonoBehaviour
 
             if ((isAdjacentX ^ isAdjacentY))
             {
-                Debug.Log("Adjacent Problem");
+                // Debug.Log("Adjacent Problem");
                 programState = ProgramState.SolvingProblem;
                 problemPartner = problem;
                 problem.IsAvailable = false;
@@ -162,7 +175,7 @@ public class Robot : MonoBehaviour
 
             if (otherRobot != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
-                Debug.Log("Adjacent Robot inc");
+                // Debug.Log("Adjacent Robot inc");
                 programState = ProgramState.WaitingAnotherRobot;
                 otherRobot.programState = ProgramState.TargetLock;
             }
@@ -193,12 +206,15 @@ public class Robot : MonoBehaviour
         // if target is in bounding box set object is moving, otherwise set another target position
         if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == true)
         {
+            
+            gridManager.robotMainTargetList[this] = mainTargetGridPosition;
             return;
         }
         else if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == false)
         {
             SetMainTargetGridPosition();
         }
+        gridManager.robotMainTargetList[this] = mainTargetGridPosition;
     }
 
     public void SetTargetGridPosition()
@@ -208,9 +224,8 @@ public class Robot : MonoBehaviour
         if (gridPosition == mainTargetGridPosition)
         {
             SetMainTargetGridPosition();
-            gridManager.robotMainTargetList[this] = mainTargetGridPosition;
         }
-        
+
         if(gridManager.gridList.ContainsKey(gridPosition + direction)) {
             targetGridPosition = gridPosition + direction;
             gridManager.robotTargetList[this] = targetGridPosition;
@@ -240,14 +255,15 @@ public class Robot : MonoBehaviour
         CommunicatingCooldown -= 1;
         problemCooldown -= 1;
         
-        if (programState == ProgramState.TargetLock || programState == ProgramState.WaitingAnotherRobot || programState == ProgramState.WaitingForNextTurn)
+        if (programState == ProgramState.TargetLock || programState == ProgramState.WaitingAnotherRobot || 
+            programState == ProgramState.WaitingForNextTurn || programState == ProgramState.OutOfGridPosition)
             programState = ProgramState.Moving;
     }
     
     
     public void ActBasedOnState()
     {
-        Debug.Log(programState + ", " + this.name);
+        // Debug.Log(programState + ", " + this.name);
 
         switch (programState)
         {
@@ -305,7 +321,7 @@ public class Robot : MonoBehaviour
     public void UpdatePositionBefore()
     {            
         // If we have moved so far, update position
-        if (programState == ProgramState.Moving || programState == ProgramState.TargetLock)
+        if (programState == ProgramState.Moving || programState == ProgramState.TargetLock || programState == ProgramState.OutOfGridPosition)
         {
             gridPosition = targetGridPosition;
             transform.position = gridManager.gridList[gridPosition];
@@ -319,6 +335,7 @@ public class Robot : MonoBehaviour
 
 public enum ProgramState
 {
+    OutOfGridPosition,  // TODO; knockback veya blockla karsılasınca, normal hızla en sonki grid pozisyonuna dönsün
     WaitingForNextTurn,
     Moving,
     SolvingProblem,

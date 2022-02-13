@@ -91,7 +91,7 @@ public class GridManager : MonoBehaviour
 
             robot.UpdatePositionBefore();
             robot.EarlyUpdateState();
-            if (robot.IsAvailableToMove == false) continue;
+            if (robot.IsMoving == false) continue;
 
             
             // Set new target position
@@ -115,7 +115,7 @@ public class GridManager : MonoBehaviour
 
     private void MakeThemActBasedOnState()
     {
-        Debug.Log("start of ActBasedOnState");
+        // Debug.Log("start of ActBasedOnState");
         foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
             item.Key.ActBasedOnState();
     }
