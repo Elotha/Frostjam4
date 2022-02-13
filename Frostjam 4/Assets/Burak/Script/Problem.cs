@@ -5,21 +5,11 @@ using UnityEngine;
 public class Problem : MonoBehaviour
 {
     [SerializeField] public Vector2Int gridPosition;
+    public bool IsAvailable = true;
 
-    private void Awake()
-    {
-        
-    }
-
-    // Start is called before the first frame update
     void Start()
     {
-        GridManager.Instance.objectPositions.Add(gridPosition);
+        GridManager.Instance.problemsList.Add(this);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
