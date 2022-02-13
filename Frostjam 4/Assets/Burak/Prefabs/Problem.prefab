@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0da7c608a8dd0d47aaecd92d35868c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridPosition: {x: 7, y: 2}
+  gridPosition: {x: 3, y: 1}
   RemainingProblemInSeconds: 15
   remainigPartIndicator: {fileID: 4069109610561724327}
   IsAvailable: 1
