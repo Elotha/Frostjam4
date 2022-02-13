@@ -57,7 +57,6 @@ public class Knockback : MonoBehaviour
             float yCurve = heightCurve.Evaluate(ratio);
             
             Vector2 positionWithHeight = new Vector2(straightPosition.x, straightPosition.y + yCurve);
-            Debug.Log(positionWithHeight);
             programmeRb.MovePosition(positionWithHeight);
             yield return null;
         }

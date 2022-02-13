@@ -348,7 +348,9 @@ MonoBehaviour:
   cellSize: 1
   startPoint: {x: -6, y: 3, z: 0}
   robotPrefab: {fileID: 2782911195938023227, guid: e0cc8ed2127293147b3983b8ffc61edb, type: 3}
-  objectPositions: []
+  borderPrefab: {fileID: 7942667944228219218, guid: 2a9e1f1a071a0ff47ab8158957037c55, type: 3}
+  blockPositions: []
+  problemsList: []
 --- !u!1001 &544336752
 PrefabInstance:
   m_ObjectHideFlags: 0
