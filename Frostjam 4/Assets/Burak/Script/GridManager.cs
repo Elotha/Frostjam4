@@ -69,8 +69,6 @@ public class GridManager : MonoBehaviour
             //    item.Key.SearchProblem();
 
             Robot robot = robotList.ElementAt(i).Key;
-            
-
             robot.gridPosition = robot.targetGridPosition;
             robot.transform.position = gridList[robot.gridPosition];
             robotList[robot] = robot.gridPosition;
@@ -80,22 +78,6 @@ public class GridManager : MonoBehaviour
             robot.SetTargetGridPosition();
             robotTargetList[robot] = robot.targetGridPosition;
         }
-
-        //foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
-        //{
-        //    // TODO: Search logic is not completed.
-        //    //foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
-        //    //    item.Key.SearchProblem();
-
-        //    // Update grid position
-        //    Robot robot = item.Key;
-        //    robot.gridPosition = robot.targetGridPosition;
-        //    robot.transform.position = gridList[robot.gridPosition];
-        //    robotList[robot] = robot.gridPosition;
-        //    // Set new target position
-        //    robot.SetTargetGridPosition();
-        //    robotTargetList[robot] = robot.targetGridPosition;
-        //}
     }
     
     private void CheckAndSetRobotState()

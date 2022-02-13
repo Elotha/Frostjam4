@@ -7,9 +7,11 @@ public class Robot : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private int minDistance;
     [SerializeField] private int maxDistance;
-    [SerializeField] private int distance;
+    [SerializeField] public int distance;
     [SerializeField] public Vector2Int direction;
-    [SerializeField] private float scanProblemDistance;
+    [SerializeField] private float scanProblemMultiplier;
+    
+    private float scanProblemDistance;
 
     public Vector2Int gridPosition;
     public Vector2Int targetGridPosition;
@@ -18,11 +20,14 @@ public class Robot : MonoBehaviour
     public ProgramState programState;
 
     private Vector2Int focusedProblem;
+
+    private Rigidbody2D rigid2D;
     private GridManager gridManager;
 
     private void Awake()
     {
-        gridManager = GridManager.Instance;   
+        gridManager = GridManager.Instance;
+        rigid2D = GetComponent<Rigidbody2D>();
     }
 
     // Start is called before the first frame update
@@ -40,10 +45,11 @@ public class Robot : MonoBehaviour
 
         programState = ProgramState.Moving;
         speed = (1f / gridManager.loopTime) / gridManager.cellSize;
+        scanProblemDistance = gridManager.cellSize * scanProblemMultiplier;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         GoToTargetGridPosition();
     }
@@ -52,8 +58,9 @@ public class Robot : MonoBehaviour
     {
         if (programState == ProgramState.Moving || programState == ProgramState.TargetLock)
         {
-            Vector3 directionV3 = new Vector3(direction.x, -direction.y, 0f);
-            transform.position += directionV3 * speed * Time.deltaTime;
+            Vector2 directionV2 = new Vector2(direction.x, -direction.y);
+            Vector2 newPosition = rigid2D.position + directionV2 * speed * Time.fixedDeltaTime;
+            rigid2D.MovePosition(newPosition);
         }
     }
 
@@ -124,8 +131,8 @@ public class Robot : MonoBehaviour
                 continue;
 
             var V2 = item.Value;
-            bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1;
-            bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1;
+            bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
+            bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
 
             if (item.Key != this && (isAdjacentX ^ isAdjacentY))
             {
@@ -187,15 +194,19 @@ public class Robot : MonoBehaviour
     public void SearchProblem()
     {
         // TODO: update focused problem.
+        //for (int i = 0; i < gridManager.objectPositions.Count; i++)
+        //{
+            
+        //}
 
-        Vector2 rayDirection = (Vector2)direction;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, scanProblemDistance);
+        //Vector2 rayDirection = (Vector2)direction;
+        //RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, scanProblemDistance);
 
-        if(hit.transform.TryGetComponent(out Problem problem))
-        {
-            // mainTargetGridPosition = problem.gridPosition;
-            // gridManager.robotMainTargetList[this] = mainTargetGridPosition;
-        }
+        //if(hit.transform.TryGetComponent(out Problem problem))
+        //{
+        //    // mainTargetGridPosition = problem.gridPosition;
+        //    // gridManager.robotMainTargetList[this] = mainTargetGridPosition;
+        //}
     }
 }
 
