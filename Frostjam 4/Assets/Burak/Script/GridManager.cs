@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class GridManager : MonoBehaviour
 {
@@ -69,11 +70,11 @@ public class GridManager : MonoBehaviour
             //    item.Key.SearchProblem();
             Robot robot = robotList.ElementAt(i).Key;
 
+
+            robot.UpdatePositionBefore();
             robot.EarlyUpdateState();
-            if (robot.IsAvailableToMove == false) return;
-            robot.gridPosition = robot.targetGridPosition;
-            robot.transform.position = gridList[robot.gridPosition];
-            robotList[robot] = robot.gridPosition;
+            if (robot.IsAvailableToMove == false) continue;
+
             
             // Set new target position
             // TODO: check state, if ok call the function
@@ -96,6 +97,7 @@ public class GridManager : MonoBehaviour
 
     private void MakeThemActBasedOnState()
     {
+        Debug.Log("start of ActBasedOnState");
         foreach (KeyValuePair<Robot, Vector2Int> item in robotList)
             item.Key.ActBasedOnState();
     }

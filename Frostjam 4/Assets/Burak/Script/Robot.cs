@@ -19,8 +19,10 @@ public class Robot : MonoBehaviour
     
     [Tooltip("How many turns inbetween two communications")]
     [SerializeField] private int CommunicatingCooldownMax;
+    [SerializeField] private float CommunicationDurationMax;
     private int CommunicatingCooldown;
     private float communicationDuration;
+    private Robot communicationPartner = null;
 
     [Header("Grid related info")]
     public Vector2Int gridPosition;
@@ -86,25 +88,27 @@ public class Robot : MonoBehaviour
 
         foreach (KeyValuePair<Robot, Vector2Int> item in gridManager.robotList)
         {
-            if (item.Key.IsAvailable != true)
+            var otherRobot = item.Key;
+            if (otherRobot.IsAvailable != true)
                 continue;
 
-            var V2 = item.Value;
+            var V2 = otherRobot.gridPosition;
             bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
             bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
-            bool otherRobotSeeksPartner = (item.Key.CommunicatingCooldown <= 0);
+            bool otherRobotSeeksPartner = (otherRobot.CommunicatingCooldown <= 0);
             bool thisRobotSeeksPartner = (CommunicatingCooldown <= 0);
 
             if (item.Key != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
                 Debug.Log("Adjacent Robot");
                 testCounter += 1;
-                item.Key.testCounter += 1;
-                // TODO: There may be some conditions for communicating
+                otherRobot.testCounter += 1;
+                communicationPartner = otherRobot;
+                otherRobot.communicationPartner = this;
                 programState = ProgramState.Communicating;
-                communicationDuration = 2.5f;
-                item.Key.programState = ProgramState.Communicating;
-                item.Key.communicationDuration = 2.5f;
+                communicationDuration = CommunicationDurationMax;
+                otherRobot.programState = ProgramState.Communicating;
+                otherRobot.communicationDuration = CommunicationDurationMax;
             }
         }
     }
@@ -120,23 +124,23 @@ public class Robot : MonoBehaviour
 
         foreach (KeyValuePair<Robot, Vector2Int> item in gridManager.robotTargetList)
         {
-            if (item.Key.IsAvailable != true)     
+            var otherRobot = item.Key; 
+            if (otherRobot.IsAvailable != true)     
                 continue;
 
-            var V2 = item.Value;
+            var V2 = otherRobot.targetGridPosition;
             bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
             bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
-            bool otherRobotSeeksPartner = (item.Key.CommunicatingCooldown <= 0);
+            bool otherRobotSeeksPartner = (otherRobot.CommunicatingCooldown <= 0);
             bool thisRobotSeeksPartner = (CommunicatingCooldown <= 0);
 
-            if (item.Key != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
+            if (otherRobot != this && (isAdjacentX ^ isAdjacentY) && otherRobotSeeksPartner && thisRobotSeeksPartner)
             {
                 Debug.Log("Adjacent Robot inc");
                 testCounter += 1;
-                item.Key.testCounter += 1;
-                // TODO: There may be some conditions for waiting
+                otherRobot.testCounter += 1;
                 programState = ProgramState.WaitingAnotherRobot;
-                item.Key.programState = ProgramState.TargetLock;
+                otherRobot.programState = ProgramState.TargetLock;
             }
         }
     }
@@ -175,6 +179,7 @@ public class Robot : MonoBehaviour
 
     public void SetTargetGridPosition()
     {
+        
         // TODO: Check if grid position is equal to main target
         if (gridPosition == mainTargetGridPosition)
         {
@@ -217,7 +222,7 @@ public class Robot : MonoBehaviour
     
     public void ActBasedOnState()
     {
-        Debug.Log(programState);
+        Debug.Log(programState + ", " + this.name);
 
         switch (programState)
         {
@@ -263,6 +268,16 @@ public class Robot : MonoBehaviour
         }
     }
 
+    public void UpdatePositionBefore()
+    {            
+        // If we have moved so far, update position
+        if (programState == ProgramState.Moving || programState == ProgramState.TargetLock)
+        {
+            gridPosition = targetGridPosition;
+            transform.position = gridManager.gridList[gridPosition];
+            gridManager.robotList[this] = gridPosition;
+        }
+    }
 }
 
 
