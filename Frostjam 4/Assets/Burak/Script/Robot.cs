@@ -156,6 +156,7 @@ public class Robot : MonoBehaviour
             if ((isAdjacentX ^ isAdjacentY) && thisRobotSeeksPartner)
             {
                 // Debug.Log("Adjacent Problem");
+                _robotIndicator.ActivateMiningIndicator();
                 programState = ProgramState.SolvingProblem;
                 problemPartner = problem;
                 problem.IsAvailable = false;
@@ -307,6 +308,7 @@ public class Robot : MonoBehaviour
                 
                 if (problemDuration < 0 || problemPartner == null)
                 {
+                    _robotIndicator.DeactivateMiningIndicator();
                     programState = ProgramState.WaitingForNextTurn;
                     problemCooldown = problemCooldownMax;
                     problemPartner.IsAvailable = true;

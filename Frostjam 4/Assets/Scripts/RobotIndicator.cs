@@ -5,15 +5,28 @@ using UnityEngine;
 
 public class RobotIndicator : MonoBehaviour
 {
-    public GameObject indicator;
+    public GameObject indicatorC;
+    public GameObject indicatorM;
 
     public void ActivateCommunicationIndicator()
     {
-        indicator.SetActive(true);
+        indicatorC.SetActive(true);
     }
     
     public void DeactivateCommunicationIndicator()
     {
-        indicator.SetActive(false);
+        indicatorC.SetActive(false);
     }
+    
+    public void ActivateMiningIndicator()
+    {
+        indicatorM.SetActive(true);
+    }
+    
+    public void DeactivateMiningIndicator()
+    {
+        indicatorM.SetActive(false);
+    }
+    
+    
 }
