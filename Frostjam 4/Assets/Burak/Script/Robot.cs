@@ -231,7 +231,6 @@ public class Robot : MonoBehaviour
             case ProgramState.Communicating:
                 break;
             case ProgramState.SolvingProblem:
-                Debug.LogError(this.name + " state 2");
                 break;
         }
     }
