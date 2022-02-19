@@ -5,18 +5,22 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float multiplier = 1f;
+    [NonSerialized]public Vector2 movementVec;
     [NonSerialized]public float multiplierModifier = 1f;
-    public Vector2 movementVec;
-    private float moveSpeed = 5f;
+    [SerializeField]private float moveSpeed = 5f;
     //public float rayLength = 2.29f;
 
     private Rigidbody2D playerRb;
     private Animator _animator;
+    
+    private float diagonalMoveSpeed;
+    private float perpendicularMoveSpeed;
     void Start()
     {
         playerRb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        diagonalMoveSpeed = moveSpeed * 0.707f;
+        perpendicularMoveSpeed = moveSpeed;
     }
 
     void Update()
@@ -27,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
         if (movementVec.x * movementVec.y != 0)
         {
             _animator.SetBool("isMoving", true);
-            moveSpeed = 3.55f;
+            moveSpeed = diagonalMoveSpeed;
             if (movementVec.x > 0)
             {
                 _animator.SetFloat("horizontalSpeed", 1f);
@@ -47,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
+            moveSpeed = perpendicularMoveSpeed;
             _animator.SetBool("isMoving", true);
             if (movementVec.x > 0)
             {
@@ -98,6 +103,6 @@ public class PlayerMovement : MonoBehaviour
             playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * Time.deltaTime);
         }
         */
-        playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * multiplier * multiplierModifier * Time.deltaTime);
+        playerRb.MovePosition(playerRb.position + movementVec * moveSpeed * multiplierModifier * Time.deltaTime);
     }
 }

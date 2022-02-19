@@ -8,12 +8,15 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public Text leftText;
+    public Text programLeftText;
     public Text timeText;
     public Text aiSentienceText;
     public Slider aiSentienceSlider;
     public Image sliderFillImage;
     public Gradient colorGradient;
-    public int problemLeft => GridManager.Instance.problemsList.Count;
+    //public int problemLeft => GridManager.Instance.problemsList.Count;
+    private int problemLeft;
+    private int programLeft;
     public int gameLastsFor;
     private float aiHighestSentience = 0f;
     public static GameManager Instance;
@@ -34,6 +37,10 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         InvokeRepeating("CountDowner", 0f, 1f);
+        problemLeft = GridManager.Instance.problemsList.Count;
+        programLeft = GridManager.Instance.robotList.Count;
+        
+        UpdateProgramLeft();
         UpdateProblemLeft();
         UpdateTime();
     }
@@ -58,7 +65,12 @@ public class GameManager : MonoBehaviour
 
     public void UpdateProblemLeft()
     {
-        leftText.text = "Problems left: " + problemLeft;
+        leftText.text = "X " + problemLeft;
+    }
+    
+    public void UpdateProgramLeft()
+    {
+        programLeftText.text = "X " + programLeft;
     }
 
     public void UpdateAISentience()
