@@ -12054,7 +12054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.1
-  magnitude: 0.2
+  magnitude: 0.1
 --- !u!4 &1460144415
 Transform:
   m_ObjectHideFlags: 0
