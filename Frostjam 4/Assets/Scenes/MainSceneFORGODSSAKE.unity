@@ -210,9 +210,9 @@ GameObject:
   - component: {fileID: 212059669}
   - component: {fileID: 212059671}
   - component: {fileID: 212059670}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Square (2)
-  m_TagString: Untagged
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8766,9 +8766,9 @@ GameObject:
   - component: {fileID: 434330717}
   - component: {fileID: 434330719}
   - component: {fileID: 434330718}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Square (1)
-  m_TagString: Untagged
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8781,7 +8781,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 434330716}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -8.5, z: 0}
+  m_LocalPosition: {x: 0, y: -8.29, z: 0}
   m_LocalScale: {x: 20.5, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 958506456}
@@ -9243,7 +9243,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -366, y: 136}
-  m_SizeDelta: {x: 50, y: 50}
+  m_SizeDelta: {x: 30, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &648102159
 MonoBehaviour:
@@ -9265,7 +9265,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 5714116977250483556, guid: 31d201d6dffc5bd459a46253daea921b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f874d239996e8804c91277cb7f22bb76, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9526,9 +9526,9 @@ GameObject:
   - component: {fileID: 934948277}
   - component: {fileID: 934948279}
   - component: {fileID: 934948278}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Square (3)
-  m_TagString: Untagged
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9737,7 +9737,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 167, y: -23.34246}
+  m_AnchoredPosition: {x: 155, y: -23.34246}
   m_SizeDelta: {x: 220, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &940962935
@@ -9807,7 +9807,7 @@ Transform:
   m_GameObject: {fileID: 958506455}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.0375, y: 1.0625, z: 1}
   m_Children:
   - {fileID: 1973029640}
   - {fileID: 434330717}
@@ -10616,7 +10616,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 167, y: -23.34246}
+  m_AnchoredPosition: {x: 165, y: -23.34246}
   m_SizeDelta: {x: 220, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1752802934
@@ -10762,9 +10762,9 @@ GameObject:
   - component: {fileID: 1973029640}
   - component: {fileID: 1973029642}
   - component: {fileID: 1973029641}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Square
-  m_TagString: Untagged
+  m_TagString: Border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

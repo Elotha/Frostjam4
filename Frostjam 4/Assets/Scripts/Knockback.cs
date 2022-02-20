@@ -17,6 +17,8 @@ public class Knockback : MonoBehaviour
     [SerializeField]
     private AnimationCurve speedCurve;
 
+    private bool onTheEdge = false;
+
 
     private ProgrammeLineRenderer _programmeLineRendererScr;
     private LineRenderer _programmeLineRenderer;
@@ -46,10 +48,10 @@ public class Knockback : MonoBehaviour
     {
         Vector3 origin = transform.position;
         Vector2 targetPos = (Vector2)origin + (Vector2)direction.normalized * length;
-        Debug.Log(origin + " -> " + targetPos);
+        //Debug.Log(origin + " -> " + targetPos);
         float time = 0f;
         Vector3 straightPosition = origin;
-        while (time < duration)
+        while (time < duration && !onTheEdge)
         {
             time = Mathf.Min(time + Time.deltaTime, duration);
             float ratio = time / duration;
@@ -94,6 +96,7 @@ public class Knockback : MonoBehaviour
         _robot.gridPosition = GridManager.Instance.gridList.ElementAt(minIndex).Key;
         _robot.targetGridPosition = _robot.gridPosition;
         _robot.SetMainTargetGridPosition();
+        onTheEdge = false;
     }
 
     /*
@@ -115,13 +118,15 @@ public class Knockback : MonoBehaviour
     }
     */
 
-    private void OnCollisionEnter2D(Collision2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (haveNoControll)
         {
-            if (other.gameObject.CompareTag("Border") || other.gameObject.CompareTag("Wall"))
+            if (other.gameObject.CompareTag("Border"))
             {
-                Destroy(gameObject);
+                Debug.Log("hi");
+                onTheEdge = true;
+                Debug.Log("hit!");
             }
         }
     }
