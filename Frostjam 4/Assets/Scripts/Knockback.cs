@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Effects;
 using UnityEngine;
 
 public class Knockback : MonoBehaviour
@@ -25,9 +26,12 @@ public class Knockback : MonoBehaviour
     private Rigidbody2D programmeRb;
     private Robot _robot;
     private bool haveNoControll = false;
+
+    private FlashEffect _flashEffect;
     
     private void Start()
     {
+        _flashEffect = GetComponent<FlashEffect>();
         _programmeLineRendererScr = GetComponent<ProgrammeLineRenderer>();
         _programmeLineRenderer = GetComponent<LineRenderer>();
         _robot = GetComponent<Robot>();
@@ -36,6 +40,8 @@ public class Knockback : MonoBehaviour
 
     public void startKnockback(Vector3 direction)
     {
+        _flashEffect.StartFlashing();
+        CameraShake.I.Shake();
         deactivateClaimInfo();
         _robot.Interrupt();
         _robot.programState = ProgramState.Knockback;
