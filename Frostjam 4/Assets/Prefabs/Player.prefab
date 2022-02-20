@@ -238,8 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cfb69fc9a4da7b418a1826deb77f13c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  multiplier: 1
-  movementVec: {x: 0, y: 0}
+  moveSpeed: 5
 --- !u!114 &8549933355635307148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,7 +251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9a167f025403954aaef4399ee4b7d86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceBetweenWalls: 0.4
+  distanceBetweenWalls: 0.3
   movementMultiplier: 2
   wallBuildingDuration: 0.8
   myCollider2D: {fileID: 0}

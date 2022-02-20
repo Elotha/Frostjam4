@@ -5,20 +5,32 @@ using UnityEngine;
 public class Wall : MonoBehaviour
 {
     [SerializeField] private float secondsAfterDestruction = 3f;
-    void Start()
+    [SerializeField] private float colliderEnableTime = 0.1f;
+
+    private Animator _animator;
+    private static readonly int TimeIsOut = Animator.StringToHash("TimeIsOut");
+
+    private void Start()
     {
-        Invoke("ActivateCollider", 0.1f);
-        StartCoroutine(DestroySelfAfter());
+        _animator = GetComponent<Animator>();
+        Invoke(nameof(ActivateCollider), colliderEnableTime);
+        StartCoroutine(StartFalling());
     }
 
-    void ActivateCollider()
+    private void ActivateCollider()
     {
         gameObject.GetComponent<BoxCollider2D>().enabled = true;
     }
 
-    IEnumerator DestroySelfAfter()
+    private IEnumerator StartFalling()
     {
         yield return new WaitForSeconds(secondsAfterDestruction);
+        _animator.SetBool(TimeIsOut, true);
+    }
+
+    // This is called from animation event
+    public void DestroyWall()
+    {
         Destroy(gameObject);
     }
 }
