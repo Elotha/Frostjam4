@@ -40,14 +40,17 @@ public class Knockback : MonoBehaviour
 
     public void startKnockback(Vector3 direction)
     {
-        _flashEffect.StartFlashing();
-        CameraShake.I.Shake();
-        deactivateClaimInfo();
-        _robot.Interrupt();
-        _robot.programState = ProgramState.Knockback;
-        //programmeRb.bodyType = RigidbodyType2D.Dynamic;
-        StartCoroutine(getKnocked(direction));
-        haveNoControll = true;
+        if (!haveNoControll)
+        {
+            haveNoControll = true;
+            _flashEffect.StartFlashing();
+            CameraShake.I.Shake();
+            deactivateClaimInfo();
+            _robot.Interrupt();
+            _robot.programState = ProgramState.Knockback;
+            //programmeRb.bodyType = RigidbodyType2D.Dynamic;
+            StartCoroutine(getKnocked(direction));
+        }
     }
 
     private IEnumerator getKnocked(Vector3 direction)
@@ -130,9 +133,9 @@ public class Knockback : MonoBehaviour
         {
             if (other.gameObject.CompareTag("Border"))
             {
-                Debug.Log("hi");
+                //Debug.Log("hi");
                 onTheEdge = true;
-                Debug.Log("hit!");
+                //Debug.Log("hit!");
             }
         }
     }
