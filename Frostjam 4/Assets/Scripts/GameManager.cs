@@ -78,8 +78,8 @@ public class GameManager : MonoBehaviour
         // update AI sentience
         var highestSentience = 0f;
         foreach (var variable in GridManager.Instance.robotList)
-            if (highestSentience < variable.Key.sentience)
-                highestSentience = variable.Key.sentience;
+            if (highestSentience < variable.Key.Sentience)
+                highestSentience = variable.Key.Sentience;
 
         aiHighestSentience = highestSentience;
         aiSentienceText.text = "Maximum AI Sentience: " + (int) highestSentience + "%";

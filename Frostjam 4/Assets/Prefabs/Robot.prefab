@@ -475,7 +475,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 17cb8f359a192454aad64f600927e4ea, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -497,7 +497,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: -4535539303643731602, guid: 31d201d6dffc5bd459a46253daea921b, type: 3}
-  m_Color: {r: 1, g: 0.5707547, b: 0.7957102, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -696,6 +696,13 @@ MonoBehaviour:
   mainTargetGridPosition: {x: 0, y: 0}
   programState: 0
   sentience: 0
+  matPropBlock:
+    Rend: {fileID: 1802056671031725457}
+    IndexInRenderer: 0
+    PropName: _ColorLerpVal
+    UseMaterialCopy: 1
+    Mat: {fileID: 0}
+    Modifiers: []
   sentienceMultiplier: 2
   aiSentienceIndicator: {fileID: 8640918804501362330}
 --- !u!114 &5103096934416622540
@@ -831,5 +838,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flashTime: 0.1
-  defaultMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  defaultMaterial: {fileID: 2100000, guid: 17cb8f359a192454aad64f600927e4ea, type: 2}
   flashMaterial: {fileID: 2100000, guid: 5d10a450c0efa5543a593b36908e59d4, type: 2}
