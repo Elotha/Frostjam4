@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -40,8 +41,24 @@ public class Robot : MonoBehaviour
     
     private Rigidbody2D rigid2D;
     private GridManager gridManager;
+
+    public float Sentience
+    {
+        get
+        {
+            return sentience;
+        }
+        set
+        {
+            sentience = value;
+            matPropBlock.SetValue(sentience / 100f);
+        }
+    }
     [Tooltip("When at 100, robot becomes sentience and we lose the game or smt. starts with 0")]
-    [SerializeField] public float sentience = 0;
+    [SerializeField] private float sentience;
+
+    
+    [SerializeField] private KyCustomMatPropBlock matPropBlock;
     [SerializeField] private float sentienceMultiplier;
     [SerializeField] private Transform aiSentienceIndicator;
     private RobotIndicator robotIndicator;
@@ -50,6 +67,7 @@ public class Robot : MonoBehaviour
     {
         robotIndicator = GetComponent<RobotIndicator>();
         rigid2D = GetComponent<Rigidbody2D>();
+        matPropBlock.Initialize();
     }
 
     void Start()
@@ -91,7 +109,6 @@ public class Robot : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other.tag);
         if (other.CompareTag("Wall") && programState != ProgramState.OutOfGridPosition)
         {
             if (programState == ProgramState.Knockback) return;
@@ -323,9 +340,9 @@ public class Robot : MonoBehaviour
             case ProgramState.Communicating:
                 // GameManager.DetroidBecomeHuman += Time.deltaTime;
                 communicationDuration -= Time.deltaTime;
-                sentience += sentienceMultiplier * Time.deltaTime;
-                aiSentienceIndicator.localScale = new Vector3(sentience / 100f, aiSentienceIndicator.localScale.y, aiSentienceIndicator.localScale.z);
-                aiSentienceIndicator.localPosition = new Vector3(-0.49f + sentience / 100f / 2f, aiSentienceIndicator.localPosition.y, aiSentienceIndicator.localPosition.z);
+                Sentience += sentienceMultiplier * Time.deltaTime;
+                aiSentienceIndicator.localScale = new Vector3(Sentience / 100f, aiSentienceIndicator.localScale.y, aiSentienceIndicator.localScale.z);
+                aiSentienceIndicator.localPosition = new Vector3(-0.49f + Sentience / 100f / 2f, aiSentienceIndicator.localPosition.y, aiSentienceIndicator.localPosition.z);
                 if (communicationDuration < 0)
                 {
                     programState = ProgramState.WaitingForNextTurn;
