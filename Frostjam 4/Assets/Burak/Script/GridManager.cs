@@ -7,32 +7,43 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] public float loopTime = 1f;
     [SerializeField] private int robotCount = 5;
+    [SerializeField] private int problemCount = 6;
     [SerializeField] public int width = 13;
     [SerializeField] public int height = 7;
     [SerializeField] public float cellSize = 1f;
     [SerializeField] public Vector3 startPoint;
 
     [SerializeField] private Robot robotPrefab;
+    [SerializeField] private Problem problemPrefab;
     [SerializeField] private GameObject borderPrefab;
 
     public Dictionary<Vector2Int, Vector3> gridList = new Dictionary<Vector2Int, Vector3>();
     public Dictionary<Robot, Vector2Int> robotList = new Dictionary<Robot, Vector2Int>();
     public Dictionary<Robot, Vector2Int> robotTargetList = new Dictionary<Robot, Vector2Int>();
     public Dictionary<Robot, Vector2Int> robotMainTargetList = new Dictionary<Robot, Vector2Int>();
+    public Dictionary<Problem, Vector2Int> problemsList = new Dictionary<Problem, Vector2Int>();
     public List<Vector2Int> objectPositions
     {
         // returns temporary
         get
         {
             var list = new List<Vector2Int>();
+            list.AddRange(blockPositionList);
             foreach (var problem in problemsList)
-                list.Add(problem.gridPosition);
-            list.AddRange(blockPositions);
+                list.Add(problem.Value);
             return list;
         }
     }
-    public List<Vector2Int> blockPositions = new List<Vector2Int>();
-    public List<Problem> problemsList = new List<Problem>();
+    public List<BlockPositions> blockPositions = new List<BlockPositions>();
+    
+    public List<Vector2Int> blockPositionList = new List<Vector2Int>();
+
+    [System.Serializable]
+    public class BlockPositions
+    {
+        public Vector2Int startPosition;
+        public Vector2Int endPosition;
+    }
     
     public static GridManager Instance;
 
@@ -57,6 +68,9 @@ public class GridManager : MonoBehaviour
     {
         GenerateGrid();
         // GenerateGridBorders();
+
+        SpawnDeadCells();
+        SpawnProblems();
         SpawnRobots();
     }
 
@@ -146,6 +160,44 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    private void SpawnProblems()
+    {
+        // Spawn problems and log into problemList
+        for (int i = 0; i < problemCount; i++)
+        {
+            // Select spawn position
+            int randomX = Random.Range(0, width - 1);
+            int randomY = Random.Range(0, height - 1);
+            Vector2Int gridPosition = new Vector2Int(randomX, randomY);
+            while (objectPositions.Contains(gridPosition) == true || robotList.ContainsValue(gridPosition) == true)
+            {
+                randomX = Random.Range(0, width - 1);
+                randomY = Random.Range(0, height - 1);
+                gridPosition = new Vector2Int(randomX, randomY);
+            }
+
+            Problem _problem = Instantiate(problemPrefab, gridList[gridPosition], Quaternion.identity);
+            _problem.gridPosition = gridPosition;
+            _problem.name = "Problem_" + i;
+
+            problemsList.Add(_problem, gridPosition);
+        }
+    }
+
+    private void SpawnDeadCells()
+    {
+        foreach (var block in blockPositions)
+        {
+            for (int i = block.startPosition.x; i <= block.endPosition.x; i++)
+            {
+                for (int j = block.startPosition.y; j <= block.endPosition.y; j++)
+                {
+                    blockPositionList.Add(new Vector2Int(i, j));
+                }
+            }
+        }
+    }
+
     private void GenerateGrid()
     {
         for (int row = 0; row < width; row++)
@@ -192,5 +244,13 @@ public class GridManager : MonoBehaviour
         {
             Gizmos.DrawWireCube(gridItem.Value, new Vector3(cellSize, cellSize, 0f));
         }
+
+        // This is for dead grid cells
+        Gizmos.color = Color.red;
+        for (int i = 0; i < blockPositionList.Count; i++)
+        {
+            Gizmos.DrawWireSphere(gridList[blockPositionList[i]], 0.4f);
+        }
+        
     }
 }

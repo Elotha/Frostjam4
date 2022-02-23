@@ -28,9 +28,12 @@ public class Knockback : MonoBehaviour
     private bool haveNoControll = false;
 
     private FlashEffect _flashEffect;
-    
+
+    private GridManager gridManager;
+
     private void Start()
     {
+        gridManager = GridManager.Instance;
         _flashEffect = GetComponent<FlashEffect>();
         _programmeLineRendererScr = GetComponent<ProgrammeLineRenderer>();
         _programmeLineRenderer = GetComponent<LineRenderer>();
@@ -94,15 +97,20 @@ public class Knockback : MonoBehaviour
     private void findClosestGrid()
     {
         List<float> distances = new List<float>();
+        List<Vector2Int> points = new List<Vector2Int>();
         
-        for (int i = 0; i < GridManager.Instance.gridList.Count; i++)
+        for (int i = 0; i < gridManager.gridList.Count; i++)
         {
-            distances.Add(Vector3.Distance(transform.position, GridManager.Instance.gridList.ElementAt(i).Value));
+            if(gridManager.objectPositions.Contains(gridManager.gridList.ElementAt(i).Key) == false)
+            {
+                distances.Add(Vector3.Distance(transform.position, gridManager.gridList.ElementAt(i).Value));
+                points.Add(gridManager.gridList.ElementAt(i).Key);
+            }
         }
 
         int minIndex = distances.IndexOf(distances.Min());
-        transform.position = GridManager.Instance.gridList.ElementAt(minIndex).Value;
-        _robot.gridPosition = GridManager.Instance.gridList.ElementAt(minIndex).Key;
+        transform.position = gridManager.gridList[points[minIndex]];
+        _robot.gridPosition = points[minIndex];
         _robot.targetGridPosition = _robot.gridPosition;
         _robot.SetMainTargetGridPosition();
         onTheEdge = false;

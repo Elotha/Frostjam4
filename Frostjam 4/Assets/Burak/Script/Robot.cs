@@ -106,7 +106,6 @@ public class Robot : MonoBehaviour
         }
     }
 
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Wall") && programState != ProgramState.OutOfGridPosition)
@@ -157,13 +156,13 @@ public class Robot : MonoBehaviour
     {
         if (!IsAvailable) return;
 
-        foreach (Problem problem in gridManager.problemsList)
+        foreach (var problem in gridManager.problemsList)
         {
                         
             if (!IsAvailable) continue;
-            if (!problem.IsAvailable) continue;
+            if (!problem.Key.IsAvailable) continue;
             
-            var V2 = problem.gridPosition;
+            var V2 = problem.Value;
             bool isAdjacentX = Mathf.Abs(gridPosition.x - V2.x) == 1 && Mathf.Abs(gridPosition.y - V2.y) == 0;
             bool isAdjacentY = Mathf.Abs(gridPosition.y - V2.y) == 1 && Mathf.Abs(gridPosition.x - V2.x) == 0;
             bool thisRobotSeeksPartner = (problemCooldown <= 0);
@@ -173,8 +172,8 @@ public class Robot : MonoBehaviour
                 // Debug.Log("Adjacent Problem");
                 robotIndicator.ActivateMiningIndicator();
                 programState = ProgramState.SolvingProblem;
-                problemPartner = problem;
-                problem.IsAvailable = false;
+                problemPartner = problem.Key;
+                problem.Key.IsAvailable = false;
                 problemDuration = problemDurationMax;
             }
         }
@@ -228,13 +227,13 @@ public class Robot : MonoBehaviour
         gridManager.robotMainTargetList[this] = mainTargetGridPosition;
 
         // if target is in bounding box set object is moving, otherwise set another target position
-        if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == true)
+        if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == true && gridManager.blockPositionList.Contains(mainTargetGridPosition) == false)
         {
             
             gridManager.robotMainTargetList[this] = mainTargetGridPosition;
             return;
         }
-        else if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == false)
+        else if (gridManager.gridList.ContainsKey(mainTargetGridPosition) == false || gridManager.blockPositionList.Contains(mainTargetGridPosition) == true)
         {
             SetMainTargetGridPosition();
         }
@@ -303,7 +302,6 @@ public class Robot : MonoBehaviour
                 break;
         }
     }
-    
     
     private void ContinuousActBasedOnState()
     {  

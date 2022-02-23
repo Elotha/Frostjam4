@@ -11,9 +11,11 @@ public class Problem : MonoBehaviour
 
     private float startRemainingtime;
 
+    private GridManager gridManager;
+
     void Start()
     {
-        GridManager.Instance.problemsList.Add(this);
+        gridManager = GridManager.Instance;
         startRemainingtime = RemainingProblemInSeconds;
     }
 
@@ -28,7 +30,7 @@ public class Problem : MonoBehaviour
 
         if (RemainingProblemInSeconds < 0)
         {
-            GridManager.Instance.problemsList.Remove(this);
+            gridManager.problemsList.Remove(this);
             GameManager.Instance.UpdateProblemLeft();
             Destroy(gameObject);
         }
