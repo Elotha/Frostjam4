@@ -188,9 +188,9 @@ public class GridManager : MonoBehaviour
     {
         foreach (var block in blockPositions)
         {
-            for (int i = block.startPosition.x; i <= block.endPosition.x; i++)
+            for (int i = block.startPosition.x; i < block.endPosition.x; i++)
             {
-                for (int j = block.startPosition.y; j <= block.endPosition.y; j++)
+                for (int j = block.startPosition.y; j < block.endPosition.y; j++)
                 {
                     blockPositionList.Add(new Vector2Int(i, j));
                 }
