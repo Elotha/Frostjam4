@@ -22,11 +22,12 @@ namespace Effects
 
         private IEnumerator ColorChange()
         {
+            var material = _sprRenderer.material;
             var color = _sprRenderer.color;
             _sprRenderer.color = Color.white;
             _sprRenderer.material = flashMaterial;
             yield return new WaitForSeconds(flashTime);
-            _sprRenderer.material = defaultMaterial;
+            _sprRenderer.material = material;
             _sprRenderer.color = color;
         }
     }

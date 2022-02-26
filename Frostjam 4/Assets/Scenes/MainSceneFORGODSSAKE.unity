@@ -10943,12 +10943,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loopTime: 1.5
-  robotCount: 18
-  problemCount: 5
+  robotCount: 10
+  problemCount: 10
   width: 21
   height: 17
   cellSize: 1
-  startPoint: {x: -10, y: 8, z: 0}
+  startPoint: {x: -9.5, y: 7.5, z: 0}
   robotPrefab: {fileID: 2782911195938023227, guid: e0cc8ed2127293147b3983b8ffc61edb, type: 3}
   problemPrefab: {fileID: 4100363339422988322, guid: 36eec21a83f14f14797d2787240c905e, type: 3}
   borderPrefab: {fileID: 7942667944228219218, guid: 2a9e1f1a071a0ff47ab8158957037c55, type: 3}
@@ -11128,7 +11128,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  gameLastsFor: 100
+  gameLastsFor: 600
 --- !u!4 &609012831
 Transform:
   m_ObjectHideFlags: 0
@@ -11822,6 +11822,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8549933355635307142, guid: 6e489b098bb10684d85430521e919731, type: 3}
+      propertyPath: moveSpeed
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 8549933355635307143, guid: 6e489b098bb10684d85430521e919731, type: 3}
       propertyPath: m_Name
       value: Player
