@@ -19,6 +19,7 @@ public class Knockback : MonoBehaviour
     private AnimationCurve speedCurve;
 
     private bool onTheEdge = false;
+    private float posY;
 
 
     private ProgrammeLineRenderer _programmeLineRendererScr;
@@ -63,15 +64,22 @@ public class Knockback : MonoBehaviour
         //Debug.Log(origin + " -> " + targetPos);
         float time = 0f;
         Vector3 straightPosition = origin;
-        while (time < duration && !onTheEdge)
+        while (time < duration)
         {
             time = Mathf.Min(time + Time.deltaTime, duration);
             float ratio = time / duration;
             float curve1 = speedCurve.Evaluate(ratio);
             straightPosition = Vector2.Lerp(origin, targetPos, curve1);
             float yCurve = heightCurve.Evaluate(ratio);
-            
-            Vector2 positionWithHeight = new Vector2(straightPosition.x, straightPosition.y + yCurve);
+            Vector2 positionWithHeight;
+            if (!onTheEdge)
+            {
+                positionWithHeight = new Vector2(straightPosition.x, straightPosition.y + yCurve);
+            }
+            else
+            {
+                positionWithHeight = new Vector2(transform.position.x, posY + yCurve);
+            }
             programmeRb.MovePosition(positionWithHeight);
             yield return null;
         }
@@ -141,9 +149,8 @@ public class Knockback : MonoBehaviour
         {
             if (other.gameObject.CompareTag("Border"))
             {
-                //Debug.Log("hi");
+                posY = transform.position.y;
                 onTheEdge = true;
-                //Debug.Log("hit!");
             }
         }
     }
