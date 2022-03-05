@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -175,8 +176,17 @@ public class Robot : MonoBehaviour
                 problemPartner = problem.Key;
                 problem.Key.IsAvailable = false;
                 problemDuration = problemDurationMax;
+                ParticleSystem particleSystem = problem.Key.gameObject.GetComponentInChildren<ParticleSystem>();
+                particleSystem.Play();
+                StartCoroutine(ParticleCountDowner(problemDuration, particleSystem));
             }
         }
+    }
+
+    IEnumerator ParticleCountDowner(float time, ParticleSystem particle)
+    {
+        yield return new WaitForSeconds(time);
+        particle.Stop();
     }
 
     public void CheckIfAnyAdjacentRobotIncoming() 
